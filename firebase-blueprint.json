@@ -23,6 +23,7 @@
         "optionC": { "type": "string" },
         "optionD": { "type": "string" },
         "correctAnswer": { "type": "string", "enum": ["A", "B", "C", "D"] },
+        "isNoted": { "type": "boolean", "description": "Whether the question is noted by admin" },
         "createdBy": { "type": "string", "description": "UID of the creator" },
         "createdAt": { "type": "string", "format": "date-time" },
         "updatedAt": { "type": "string", "format": "date-time" }

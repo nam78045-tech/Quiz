@@ -1,22 +1,42 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
+:root {
+  --bg: #FDFCF0;
+  --text-main: #1A1A1A;
+  --text-muted: #6B7280;
+  --card-bg: #FFFFFF;
+  --card-muted: #F3F4F6;
+  --border: #000000;
+  --primary-red: #FF6B6B;
+  --primary-teal: #4ECDC4;
+  --primary-yellow: #FFE66D;
+  color-scheme: light;
+}
+
+.dark {
+  --bg: #121212;
+  --text-main: #FDFCF0;
+  --text-muted: #9CA3AF;
+  --card-bg: #1E1E1E;
+  --card-muted: #2D2D2D;
+  --border: #000000;
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text-main);
+  @apply font-sans antialiased transition-colors duration-300;
+}
+
 @theme {
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
-:root {
-  --bg: #FDFCF0;
-  --text-main: #1A1A1A;
-  --primary-red: #FF6B6B;
-  --primary-teal: #4ECDC4;
-  --primary-yellow: #FFE66D;
-}
-
-body {
-  @apply bg-[#FDFCF0] text-[#1A1A1A] font-sans antialiased;
-}
+/* Force Tailwind dark variant to follow our .dark class precisely */
+@custom-variant dark (&:where(.dark, .dark *));
 
 .neo-brutal-shadow {
   box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);

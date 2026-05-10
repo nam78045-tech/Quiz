@@ -14,6 +14,7 @@ export interface Question {
   optionC: string;
   optionD: string;
   correctAnswer: 'A' | 'B' | 'C' | 'D';
+  isNoted?: boolean;
   createdBy: string;
   createdAt: number;
   updatedAt?: number;

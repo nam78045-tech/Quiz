@@ -101,5 +101,25 @@ export const quizService = {
     } catch (error) {
       handleFirestoreError(error, OperationType.DELETE, `${SUBJECTS_COL}/${id}`);
     }
+  },
+
+  async toggleNote(id: string, isNoted: boolean): Promise<void> {
+    try {
+      const docRef = doc(db, QUESTIONS_COL, id);
+      await updateDoc(docRef, { isNoted });
+    } catch (error) {
+      handleFirestoreError(error, OperationType.UPDATE, `${QUESTIONS_COL}/${id}`);
+    }
+  },
+
+  async getNotedQuestions(): Promise<Question[]> {
+    try {
+      const q = query(collection(db, QUESTIONS_COL), where('isNoted', '==', true));
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Question));
+    } catch (error) {
+      handleFirestoreError(error, OperationType.LIST, QUESTIONS_COL);
+      return [];
+    }
   }
 };

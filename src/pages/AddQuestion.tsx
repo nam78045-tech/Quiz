@@ -78,13 +78,13 @@ export default function AddQuestion() {
   return (
     <div className="max-w-3xl mx-auto space-y-10">
       <div className="space-y-2">
-        <Link to={`/subject/${id}`} className="flex items-center gap-2 text-sm font-black uppercase text-gray-500 hover:text-black transition-colors mb-4 group">
-          <div className="bg-white border-2 border-black p-1 rounded group-hover:bg-[#4ECDC4] transition-all">
+        <Link to={`/subject/${id}`} className="flex items-center gap-2 text-sm font-black uppercase text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors mb-4 group">
+          <div className="bg-white dark:bg-[#2D2D2D] border-2 border-black p-1 rounded group-hover:bg-[#4ECDC4] transition-all">
             <ChevronLeft size={16} strokeWidth={3} />
           </div>
           Back to Subject
         </Link>
-        <h1 className="text-5xl font-black text-[#1A1A1A] uppercase tracking-tighter">Add Knowledge</h1>
+        <h1 className="text-5xl font-black text-[#1A1A1A] dark:text-white uppercase tracking-tighter transition-colors">Add Knowledge</h1>
         <p className="text-lg font-bold text-gray-500">Manual entry or high-speed regex parsing.</p>
       </div>
 
@@ -102,13 +102,13 @@ export default function AddQuestion() {
               Parse Raw Text
             </button>
           </div>
-          <textarea 
-            placeholder="Paste raw trắc nghiệm questions here...&#10;Q: Capital of France?&#10;A) Paris&#10;B) Lyon..."
-            rows={6}
-            className="w-full p-4 bg-white border-4 border-black rounded-2xl focus:outline-none font-mono text-sm leading-relaxed"
-            value={rawText}
-            onChange={(e) => setRawText(e.target.value)}
-          />
+        <textarea 
+          placeholder="Paste raw trắc nghiệm questions here...&#10;Q: Capital of France?&#10;A) Paris&#10;B) Lyon..."
+          rows={6}
+          className="w-full p-4 bg-[var(--card-bg)] text-[var(--text-main)] border-4 border-black rounded-2xl focus:outline-none font-mono text-sm leading-relaxed transition-colors"
+          value={rawText}
+          onChange={(e) => setRawText(e.target.value)}
+        />
           <div className="flex flex-col sm:flex-row items-center gap-4 p-4 bg-black/5 rounded-2xl border-4 border-black border-dashed">
             <p className="text-sm font-black uppercase text-black/60 shrink-0">Mark Correct Answer:</p>
             <div className="flex gap-2 w-full sm:w-auto">
@@ -137,7 +137,7 @@ export default function AddQuestion() {
         </section>
 
         {/* Manual Form */}
-        <form id="manual-form" onSubmit={handleSave} className="bg-white border-4 border-black p-10 rounded-[40px] neo-brutal-shadow-lg space-y-8">
+        <form id="manual-form" onSubmit={handleSave} className="bg-white dark:bg-[#1E1E1E] border-4 border-black p-10 rounded-[40px] neo-brutal-shadow-lg space-y-8 transition-colors">
           {error && (
             <div className="flex items-center gap-3 p-4 bg-[#FF6B6B] text-white border-4 border-black rounded-xl font-black text-sm">
               <AlertCircle size={20} strokeWidth={3} />
@@ -146,12 +146,12 @@ export default function AddQuestion() {
           )}
 
           <div className="space-y-3">
-            <label className="block text-sm font-black uppercase tracking-widest text-[#1A1A1A]">Entry Content</label>
+            <label className="block text-sm font-black uppercase tracking-widest text-[#1A1A1A] dark:text-white transition-colors">Entry Content</label>
             <textarea 
               required
               rows={4}
               placeholder="Type your question prompt here..."
-              className="w-full px-5 py-3 border-4 border-black rounded-2xl focus:outline-none font-bold"
+              className="w-full px-5 py-3 bg-[var(--card-bg)] text-[var(--text-main)] border-4 border-black rounded-2xl focus:outline-none font-bold transition-colors"
               value={questionText}
               onChange={(e) => setQuestionText(e.target.value)}
             />
@@ -184,7 +184,7 @@ export default function AddQuestion() {
                   placeholder={`Option ${key} text...`}
                   className={cn(
                     "w-full px-5 py-3 border-4 border-black rounded-2xl focus:outline-none font-bold transition-all",
-                    correctAnswer === key ? "bg-[#4ECDC4]/10 neo-brutal-shadow-teal scale-[1.01]" : "bg-white"
+                    correctAnswer === key ? "bg-[#4ECDC4]/10 dark:bg-[#4ECDC4]/20 neo-brutal-shadow-teal scale-[1.01]" : "bg-[var(--card-bg)] text-[var(--text-main)]"
                   )}
                   value={options[key]}
                   onChange={(e) => setOptions({ ...options, [key]: e.target.value })}

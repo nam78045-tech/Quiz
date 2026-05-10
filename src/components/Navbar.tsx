@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { User, signInWithPopup, signOut } from 'firebase/auth';
 import { auth, googleProvider } from '../lib/firebase';
 import { Link } from 'react-router-dom';
-import { LogIn, LogOut, BookOpen, User as UserIcon, Shield, ShieldAlert } from 'lucide-react';
+import { LogIn, LogOut, BookOpen, User as UserIcon, Shield, ShieldAlert, Moon, Sun } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useAdmin } from '../context/AdminContext';
+import { useTheme } from '../context/ThemeContext';
 import PasswordModal from './PasswordModal';
 
 interface NavbarProps {
@@ -13,6 +14,7 @@ interface NavbarProps {
 
 export default function Navbar({ user }: NavbarProps) {
   const { isAdminUI, unlockAdmin, lockAdmin } = useAdmin();
+  const { isDarkMode, toggleDarkMode } = useTheme();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleLogin = async () => {
@@ -43,7 +45,7 @@ export default function Navbar({ user }: NavbarProps) {
   };
 
   return (
-    <nav className="bg-white border-b-4 border-black sticky top-0 z-50">
+    <nav className="bg-[var(--card-bg)] border-b-4 border-black sticky top-0 z-50 transition-colors duration-300">
       <PasswordModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
@@ -54,17 +56,27 @@ export default function Navbar({ user }: NavbarProps) {
           <div className="bg-[#FF6B6B] p-2 border-2 border-black rounded-lg text-white neo-brutal-shadow group-hover:translate-x-0.5 group-hover:translate-y-0.5 group-hover:shadow-none transition-all">
             <BookOpen size={24} />
           </div>
-          <span className="font-black text-2xl uppercase tracking-tighter text-[#1A1A1A]">
+          <span className="font-black text-2xl uppercase tracking-tighter text-[var(--text-main)]">
             Quiz.<span className="text-[#FF6B6B]">App</span>
           </span>
         </Link>
 
         <div className="flex items-center gap-4 sm:gap-6">
           <button 
+            onClick={toggleDarkMode}
+            className="p-2 border-2 border-black rounded-xl bg-[var(--card-bg)] text-[var(--text-main)] neo-brutal-shadow transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none"
+            aria-label="Toggle Dark Mode"
+          >
+            {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
+
+          <button 
             onClick={toggleAdmin}
             className={cn(
               "flex items-center gap-2 px-3 py-2 rounded-xl border-2 border-black transition-all font-black uppercase text-[10px] tracking-tighter neo-brutal-shadow",
-              isAdminUI ? "bg-[#4ECDC4] text-black" : "bg-white text-gray-400 hover:text-black"
+              isAdminUI 
+                ? "bg-[#4ECDC4] text-black" 
+                : "bg-white dark:bg-[#2D2D2D] text-gray-400 dark:text-gray-500 hover:text-black dark:hover:text-white"
             )}
           >
             {isAdminUI ? <Shield size={16} /> : <ShieldAlert size={16} />}
@@ -74,7 +86,7 @@ export default function Navbar({ user }: NavbarProps) {
           {user ? (
             <div className="flex items-center gap-4">
               <div className="hidden md:flex flex-col items-end">
-                <span className="text-sm font-black uppercase text-[#1A1A1A]">{user.displayName}</span>
+                <span className="text-sm font-black uppercase text-[var(--text-main)]">{user.displayName}</span>
                 <span className="text-xs font-bold text-gray-500">{user.email}</span>
               </div>
               <div className="relative group">
@@ -88,7 +100,7 @@ export default function Navbar({ user }: NavbarProps) {
               </div>
               <button 
                 onClick={handleLogout}
-                className="bg-white border-2 border-black p-2 rounded-xl hover:bg-gray-100 neo-brutal-shadow-red transition-all"
+                className="bg-[var(--card-bg)] border-2 border-black p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 neo-brutal-shadow-red transition-all"
                 title="Logout"
               >
                 <LogOut size={20} />

@@ -20,22 +20,22 @@ export default function PasswordModal({ isOpen, onClose, onSubmit }: PasswordMod
           initial={{ scale: 0.9, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.9, opacity: 0, y: 20 }}
-          className="bg-[#FDFCF0] border-4 border-black p-8 rounded-[32px] neo-brutal-shadow-lg w-full max-w-sm relative"
+          className="bg-[#FDFCF0] dark:bg-[#1E1E1E] border-4 border-black p-8 rounded-[32px] neo-brutal-shadow-lg w-full max-w-sm relative transition-colors"
         >
           <button 
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-xl transition-colors"
+            className="absolute top-4 right-4 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors dark:text-white"
           >
             <X size={20} strokeWidth={3} />
           </button>
 
           <div className="flex flex-col items-center text-center space-y-6">
             <div className="w-16 h-16 bg-[#FFE66D] border-4 border-black rounded-2xl flex items-center justify-center neo-brutal-shadow-red animate-bounce">
-              <Shield size={32} strokeWidth={3} />
+              <Shield size={32} strokeWidth={3} className="text-black" />
             </div>
             
             <div className="space-y-2">
-              <h2 className="text-2xl font-black uppercase tracking-tighter">Identity Check</h2>
+              <h2 className="text-2xl font-black uppercase tracking-tighter dark:text-white">Identity Check</h2>
               <p className="text-xs font-bold text-gray-400 uppercase tracking-widest leading-none">Security clearance required</p>
             </div>
 
@@ -45,7 +45,7 @@ export default function PasswordModal({ isOpen, onClose, onSubmit }: PasswordMod
                 autoFocus
                 type="password" 
                 placeholder="••••"
-                className="w-full pl-12 pr-4 py-4 bg-white border-4 border-black rounded-2xl focus:outline-none font-black text-2xl tracking-[0.5em] text-center"
+                className="w-full pl-12 pr-4 py-4 bg-white dark:bg-[#2D2D2D] dark:text-white border-4 border-black rounded-2xl focus:outline-none font-black text-2xl tracking-[0.5em] text-center transition-colors"
                 value={pass}
                 onChange={(e) => setPass(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && onSubmit(pass)}

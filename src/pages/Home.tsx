@@ -42,24 +42,24 @@ export default function Home() {
   );
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h1 className="text-5xl font-black text-[#1A1A1A] uppercase tracking-tighter mb-2">My Subjects</h1>
+          <h1 className="text-3xl font-black text-[var(--text-main)] uppercase tracking-tighter transition-colors">My Subjects</h1>
           {isAdminUI ? (
-            <p className="text-lg font-bold text-[#FF6B6B]">Hello Master! You have full control.</p>
+            <p className="text-sm font-bold text-[#FF6B6B]">Hello Master! You have full control.</p>
           ) : (
-            <p className="text-lg font-bold text-gray-500">Practice your knowledge and track your progress.</p>
+            <p className="text-sm font-bold text-gray-500">Practice your knowledge and track your progress.</p>
           )}
         </div>
         
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
             <input 
               type="text" 
               placeholder="Search subjects..."
-              className="pl-12 pr-4 py-3 bg-white border-4 border-black rounded-xl focus:outline-none w-full md:w-64 font-bold placeholder:text-gray-300 neo-brutal-shadow"
+              className="pl-10 pr-4 py-2 bg-[var(--card-bg)] text-[var(--text-main)] border-4 border-black rounded-xl focus:outline-none w-full md:w-64 font-bold placeholder:[var(--text-muted)] transition-colors neo-brutal-shadow"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -67,29 +67,40 @@ export default function Home() {
           {isAdminUI && (
             <button 
               onClick={() => setIsAdding(!isAdding)}
-              className="bg-[#FFE66D] border-4 border-black p-3 rounded-xl hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all neo-brutal-shadow"
+              className="bg-[#FFE66D] border-4 border-black p-2 rounded-xl hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all neo-brutal-shadow"
               title="Add Subject"
             >
-              <Plus size={28} strokeWidth={3} />
+              <Plus size={24} strokeWidth={3} />
             </button>
           )}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="p-6 bg-white border-4 border-black rounded-2xl neo-brutal-shadow-red group hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">
-          <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1 group-hover:text-[#FF6B6B]">Subjects</p>
-          <p className="text-4xl font-black">{subjects.length}</p>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Link to="/quiz/noted-practice" className="p-4 bg-[#FF6B6B] border-4 border-black rounded-2xl neo-brutal-shadow text-white group hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">
+          <div className="flex justify-between items-start">
+            <p className="text-[10px] font-black uppercase tracking-widest opacity-80 mb-1">Focus Study</p>
+            <Book size={16} />
+          </div>
+          <p className="text-xl font-black uppercase tracking-tighter">Noted Ques.</p>
+          <div className="mt-2 flex items-center gap-2 text-[10px] font-bold">
+            <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></div>
+            Review Difficult Items
+          </div>
+        </Link>
+        <div className="p-4 bg-[var(--card-bg)] border-4 border-black rounded-2xl neo-brutal-shadow-red group hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all transition-colors">
+          <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 group-hover:text-[#FF6B6B]">Subjects</p>
+          <p className="text-3xl font-black text-[var(--text-main)]">{subjects.length}</p>
         </div>
-        <div className="p-6 bg-white border-4 border-black rounded-2xl neo-brutal-shadow-teal group hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">
-          <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1 group-hover:text-[#4ECDC4]">Storage Used</p>
-          <p className="text-4xl font-black text-[#4ECDC4]">0.2MB</p>
+        <div className="p-4 bg-[var(--card-bg)] border-4 border-black rounded-2xl neo-brutal-shadow-teal group hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all transition-colors">
+          <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 group-hover:text-[#4ECDC4]">Accuracy</p>
+          <p className="text-3xl font-black text-[#4ECDC4]">78%</p>
         </div>
-        <div className="p-6 bg-white border-4 border-black rounded-2xl neo-brutal-shadow-yellow group hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">
-          <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1 group-hover:text-[#FFE66D]">Sync Status</p>
-          <div className="text-xl font-black uppercase flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></span>
-            Online
+        <div className="p-4 bg-[var(--card-bg)] border-4 border-black rounded-2xl neo-brutal-shadow-yellow group hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all transition-colors text-[var(--text-main)]">
+          <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 group-hover:text-[#FFE66D]">Status</p>
+          <div className="text-sm font-black uppercase flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-green-500"></span>
+            Ready
           </div>
         </div>
       </div>
@@ -108,7 +119,7 @@ export default function Home() {
               <input 
                 autoFocus
                 type="text" 
-                className="w-full px-4 py-3 bg-white border-4 border-black rounded-xl focus:outline-none font-bold"
+                className="w-full px-4 py-3 bg-[var(--card-bg)] border-4 border-black rounded-xl focus:outline-none font-bold text-[var(--text-main)]"
                 placeholder="e.g. JAVA SPRING BOOT"
                 value={newSubjectName}
                 onChange={(e) => setNewSubjectName(e.target.value)}
@@ -118,7 +129,7 @@ export default function Home() {
               <button 
                 type="button" 
                 onClick={() => setIsAdding(false)}
-                className="px-6 py-3 bg-white border-4 border-black rounded-xl font-black uppercase text-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all neo-brutal-shadow"
+                className="px-6 py-3 bg-[var(--card-bg)] border-4 border-black rounded-xl font-black uppercase text-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all neo-brutal-shadow"
               >
                 Cancel
               </button>
@@ -145,57 +156,57 @@ export default function Home() {
             const colors = ['#FF6B6B', '#4ECDC4', '#FFE66D'];
             const color = colors[idx % colors.length];
             return (
-              <Link 
-                key={subject.id} 
-                to={`/subject/${subject.id}`}
-                className="group bg-white border-4 border-black rounded-3xl p-8 neo-brutal-shadow-lg hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all flex flex-col"
-              >
-                <div className="flex justify-between items-start mb-6">
-                  <div 
-                    className="w-14 h-14 border-2 border-black rounded-full flex items-center justify-center text-2xl shadow-[4px_4px_0px_0px_#000]"
-                    style={{ backgroundColor: color }}
-                  >
-                    {idx % 2 === 0 ? '☕' : '🗄️'}
-                  </div>
-                  <div className="flex gap-2">
-                    {isAdminUI && (
-                      <button 
-                        onClick={(e) => {
-                          e.preventDefault();
-                          if (window.confirm('Delete subject and all questions?')) {
-                            quizService.deleteSubject(subject.id).then(loadSubjects);
-                          }
-                        }}
-                        className="p-2 bg-white border-2 border-black rounded-xl hover:bg-[#FF6B6B] hover:text-white transition-all shadow-[2px_2px_0px_0px_#000]"
-                      >
-                        <Trash2 size={16} strokeWidth={3} />
-                      </button>
-                    )}
-                    <span className="px-3 py-1 bg-gray-100 border-2 border-black rounded-full text-[10px] font-black uppercase">
-                      Active Course
-                    </span>
-                  </div>
-                </div>
-                <h3 className="text-3xl font-black mb-2 group-hover:text-[#FF6B6B] transition-colors uppercase tracking-tighter">
-                  {subject.name}
-                </h3>
-                <p className="text-gray-500 font-bold text-sm mb-8 flex-1">
-                  Master the fundamentals and advanced topics of {subject.name}. Created {new Date(subject.createdAt).toLocaleDateString()}.
-                </p>
-                <div className="mt-auto flex gap-3">
-                  <div className="flex-1 py-3 bg-[#4ECDC4] border-2 border-black rounded-xl font-black text-center shadow-[4px_4px_0px_0px_#000] text-sm uppercase">
-                    Open Library
-                  </div>
-                  <div className="p-3 border-2 border-black rounded-xl bg-white hover:bg-gray-50">
-                    <ChevronRight size={20} strokeWidth={3} />
-                  </div>
-                </div>
-              </Link>
+    <Link 
+      key={subject.id} 
+      to={`/subject/${subject.id}`}
+      className="group bg-[var(--card-bg)] border-4 border-black rounded-3xl p-6 neo-brutal-shadow-lg hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all flex flex-col"
+    >
+      <div className="flex justify-between items-start mb-4">
+        <div 
+          className="w-10 h-10 border-2 border-black rounded-full flex items-center justify-center text-xl shadow-[2px_2px_0px_0px_#000]"
+          style={{ backgroundColor: color }}
+        >
+          {idx % 2 === 0 ? '☕' : '🗄️'}
+        </div>
+        <div className="flex gap-2">
+          {isAdminUI && (
+            <button 
+              onClick={(e) => {
+                e.preventDefault();
+                if (window.confirm('Delete subject and all questions?')) {
+                  quizService.deleteSubject(subject.id).then(loadSubjects);
+                }
+              }}
+              className="p-1 px-2 bg-[var(--card-bg)] border-2 border-black rounded-lg hover:bg-[#FF6B6B] hover:text-white dark:text-white transition-all shadow-[1px_1px_0px_0px_#000]"
+            >
+              <Trash2 size={14} strokeWidth={3} />
+            </button>
+          )}
+          <span className="px-2 py-0.5 bg-gray-100 dark:bg-black/40 border-2 border-black rounded-full text-[8px] font-black uppercase dark:text-gray-400">
+            Active
+          </span>
+        </div>
+      </div>
+      <h3 className="text-xl font-black mb-1 group-hover:text-[#FF6B6B] text-[var(--text-main)] transition-colors uppercase tracking-tighter">
+        {subject.name}
+      </h3>
+      <p className="text-gray-500 dark:text-gray-400 font-bold text-xs mb-4 flex-1">
+        Master {subject.name}. Created {new Date(subject.createdAt).toLocaleDateString()}.
+      </p>
+      <div className="mt-auto flex gap-2">
+        <div className="flex-1 py-1.5 bg-[#4ECDC4] border-2 border-black rounded-lg font-black text-center shadow-[2px_2px_0px_0px_#000] text-[10px] uppercase text-black">
+          Open Library
+        </div>
+        <div className="p-1.5 border-2 border-black rounded-lg bg-[var(--card-bg)] text-[var(--text-main)] hover:bg-gray-50">
+          <ChevronRight size={14} strokeWidth={3} />
+        </div>
+      </div>
+    </Link>
             );
           })}
         </div>
       ) : (
-        <div className="text-center py-20 bg-white border-4 border-black rounded-[40px] neo-brutal-shadow">
+        <div className="text-center py-20 bg-[var(--card-bg)] border-4 border-black rounded-[40px] neo-brutal-shadow">
           <Book className="mx-auto text-gray-200 mb-6" size={64} />
           <h2 className="text-2xl font-black uppercase tracking-tighter">Empty Library</h2>
           <p className="text-gray-500 font-bold max-w-xs mx-auto mt-2">Time to add your first subject and start building your knowledge base!</p>

@@ -17,6 +17,7 @@ import EditQuestion from './pages/EditQuestion';
 import Navbar from './components/Navbar';
 
 import { AdminProvider } from './context/AdminContext';
+import { ThemeProvider } from './context/ThemeContext';
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -32,18 +33,19 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-[#FDFCF0]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black"></div>
       </div>
     );
   }
 
   return (
-    <AdminProvider>
-      <Router>
-        <div className="min-h-screen bg-gray-50 flex flex-col">
-          <Navbar user={user} />
-          <main className="flex-1 container mx-auto px-4 py-8 max-w-5xl">
+    <ThemeProvider>
+      <AdminProvider>
+        <Router>
+          <div className="min-h-screen flex flex-col transition-colors duration-300">
+            <Navbar user={user} />
+            <main className="flex-1 container mx-auto px-4 py-8 max-w-5xl">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route 
@@ -66,6 +68,7 @@ export default function App() {
           </main>
         </div>
       </Router>
-    </AdminProvider>
+      </AdminProvider>
+    </ThemeProvider>
   );
 }
