@@ -36,7 +36,7 @@ export default function PasswordModal({ isOpen, onClose, onSubmit }: PasswordMod
             
             <div className="space-y-2">
               <h2 className="text-2xl font-black uppercase tracking-tighter">Identity Check</h2>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest leading-none">Enter the master key (0305)</p>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest leading-none">Security clearance required</p>
             </div>
 
             <div className="w-full relative">
