@@ -1,0 +1,73 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() { return request.auth != null; }
+    function isEmailVerified() { return request.auth.token.email_verified == true; }
+    function isAdmin() { 
+      return isSignedIn() && isEmailVerified() && request.auth.token.email == 'nam78045@gmail.com'; 
+    }
+    function isOwner(data) { return isSignedIn() && data.createdBy == request.auth.uid; }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+
+    // Validation Blueprints
+    function isValidSubject(data) {
+      return data.name is string && data.name.size() >= 1 && data.name.size() <= 100
+        && data.createdBy == request.auth.uid
+        && data.createdAt == request.time;
+    }
+
+    function isValidQuestion(data) {
+      return data.subjectId is string && isValidId(data.subjectId)
+        && data.questionText is string && data.questionText.size() <= 2000
+        && data.optionA is string && data.optionA.size() <= 1000
+        && data.optionB is string && data.optionB.size() <= 1000
+        && data.optionC is string && data.optionC.size() <= 1000
+        && data.optionD is string && data.optionD.size() <= 1000
+        && data.correctAnswer in ['A', 'B', 'C', 'D']
+        && data.createdBy == request.auth.uid
+        && data.createdAt == (resource == null ? request.time : resource.data.createdAt);
+    }
+
+    // Subjects
+    match /subjects/{subjectId} {
+      allow list: if isSignedIn(); // Allow anyone to browse
+      allow get: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(subjectId) && isValidSubject(incoming());
+      allow update: if isOwner(existing()) && isValidSubject(incoming()) 
+        && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'updatedAt']);
+      allow delete: if isOwner(existing());
+    }
+
+    // Questions
+    match /questions/{questionId} {
+      // Logic: Anyone signed in can read questions for a subject
+      allow list: if isSignedIn();
+      allow get: if isSignedIn();
+      
+      // Critical: Only Subject owners (or admins) can create/edit questions
+      function isSubjectOwner(subjectId) {
+        return get(/databases/$(database)/documents/subjects/$(subjectId)).data.createdBy == request.auth.uid;
+      }
+
+      allow create: if isSignedIn() && isValidId(questionId) 
+        && isValidQuestion(incoming())
+        && isSubjectOwner(incoming().subjectId);
+        
+      allow update: if isOwner(existing()) && isValidQuestion(incoming())
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'questionText', 'optionA', 'optionB', 'optionC', 'optionD', 
+          'correctAnswer', 'updatedAt'
+        ]);
+        
+      allow delete: if isOwner(existing());
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "entities": {
+    "Subject": {
+      "title": "Subject",
+      "description": "A quiz subject category",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Name of the subject" },
+        "createdBy": { "type": "string", "description": "UID of the creator" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "createdBy", "createdAt"]
+    },
+    "Question": {
+      "title": "Question",
+      "description": "A multiple choice question",
+      "type": "object",
+      "properties": {
+        "subjectId": { "type": "string", "description": "Reference to Subject ID" },
+        "questionText": { "type": "string", "description": "The question content" },
+        "optionA": { "type": "string" },
+        "optionB": { "type": "string" },
+        "optionC": { "type": "string" },
+        "optionD": { "type": "string" },
+        "correctAnswer": { "type": "string", "enum": ["A", "B", "C", "D"] },
+        "createdBy": { "type": "string", "description": "UID of the creator" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["subjectId", "questionText", "optionA", "optionB", "optionC", "optionD", "correctAnswer", "createdBy", "createdAt"]
+    }
+  },
+  "firestore": {
+    "subjects/{subjectId}": {
+      "schema": "Subject",
+      "description": "Collection of quiz subjects"
+    },
+    "questions/{questionId}": {
+      "schema": "Question",
+      "description": "Collection of all questions"
+    }
+  }
+}
