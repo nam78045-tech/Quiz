@@ -2,10 +2,9 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { quizService } from '../services/quizService';
 import { Subject, Question } from '../types';
-import { Play, Plus, BookOpen, ChevronLeft, Flag, Edit2, Info, Pin } from 'lucide-react';
-import { motion } from 'motion/react';
+import { Play, Plus, BookOpen, ChevronLeft, Flag, Edit2, Info, Pin, Sparkles, Zap, ArrowLeft, ArrowRight, Activity, Map } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
-
 import { useAdmin } from '../context/AdminContext';
 
 export default function SubjectDetail() {
@@ -43,136 +42,174 @@ export default function SubjectDetail() {
     setLoading(false);
   };
 
-  if (loading) return (
-    <div className="flex items-center justify-center py-20">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+  if (loading) return null;
+
+  if (!subject) return (
+    <div className="text-center py-40 glass-card rounded-[80px]">
+      <h1 className="text-3xl font-black text-white glow-text uppercase tracking-widest mb-6">Subject Void Detected</h1>
+      <Link to="/" className="btn-shine bg-white text-black px-10 py-5 rounded-[32px] font-black uppercase text-xs tracking-widest inline-block">Return to Command Map</Link>
     </div>
   );
 
-  if (!subject) return <div className="text-center py-20">Subject not found</div>;
-
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div className="space-y-1">
-          <Link to="/" className="flex items-center gap-2 text-[10px] font-black uppercase text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors mb-2 group">
-            <div className="bg-[var(--card-bg)] border-2 border-black p-1 rounded group-hover:bg-[#FFE66D] transition-all">
-              <ChevronLeft size={12} strokeWidth={3} />
-            </div>
-            Back to Library
+    <div className="space-y-24 pb-32">
+      {/* Header Section - Refined */}
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 pt-12">
+        <motion.div 
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="space-y-8"
+        >
+          <Link to="/" className="group inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.05] text-[10px] font-black text-slate-500 hover:text-white transition-all uppercase tracking-[0.2em] hover:bg-white/[0.08]">
+            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+            Back to Galactic Map
           </Link>
-          <h1 className="text-3xl font-black text-[var(--text-main)] uppercase tracking-tighter transition-colors">{subject.name}</h1>
-          <div className="flex items-center gap-3">
-            <p className="text-[10px] font-black uppercase bg-[#4ECDC4] px-3 py-0.5 border-2 border-black rounded-full flex items-center gap-2 shadow-[2px_2px_0px_0px_#000]">
-              <BookOpen size={12} /> {questions.length} Questions
-            </p>
-            <p className="text-[10px] font-black uppercase bg-[#FFE66D] px-3 py-0.5 border-2 border-black rounded-full flex items-center gap-2 shadow-[2px_2px_0px_0px_#000]">
-              <Flag size={12} /> {flaggedIds.length} Flagged
-            </p>
+          
+          <div className="flex items-center gap-8">
+            <div className="relative group">
+              <div className="absolute inset-0 bg-violet-500/20 blur-[30px] rounded-full group-hover:bg-violet-500/40 transition-all duration-700" />
+              <div className="w-24 h-24 rounded-[40px] bg-gradient-to-br from-white/[0.05] to-transparent border border-white/10 flex items-center justify-center text-5xl relative z-10 shadow-inner group-hover:rotate-12 transition-transform duration-700">
+                🪐
+              </div>
+            </div>
+            <div>
+              <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tighter leading-none mb-4">
+                <span className="text-gradient">{subject.name}</span>
+              </h1>
+              <div className="flex items-center gap-6 flex-wrap">
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-cyan-500/10 border border-cyan-500/20">
+                  <Activity size={14} className="text-cyan-400" />
+                  <span className="text-[10px] font-black uppercase text-cyan-400 tracking-wider">
+                    {questions.length} Knowledge Nodes
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-rose-500/10 border border-rose-500/20">
+                  <Flag size={14} className="text-rose-400" />
+                  <span className="text-[10px] font-black uppercase text-rose-400 tracking-wider">
+                    {flaggedIds.length} Critical Points
+                  </span>
+                </div>
+                <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-white/[0.03] border border-white/[0.05]">
+                  <Sparkles size={14} className="text-slate-500" />
+                  <span className="text-[10px] font-black uppercase text-slate-500 tracking-wider">
+                    Synced {new Date(subject.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="flex flex-wrap gap-4">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-wrap gap-4"
+        >
           {isAdminUI && (
               <Link 
                 to={`/add/${id}`}
-                className="flex items-center gap-2 px-6 py-3 bg-[var(--card-bg)] border-4 border-black rounded-xl hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all font-black uppercase text-sm neo-brutal-shadow text-[var(--text-main)]"
+                className="group flex items-center gap-3 px-8 py-5 rounded-[28px] border border-white/[0.05] bg-white/[0.02] hover:bg-white/[0.08] transition-all font-black uppercase text-[10px] tracking-[0.2em] text-white backdrop-blur-3xl"
               >
-              <Plus size={20} strokeWidth={3} />
-              Add New
+              <Plus size={18} className="text-violet-400 group-hover:rotate-90 transition-transform" />
+              Inject DNA
             </Link>
           )}
           <Link 
             to={`/quiz/${id}`}
-            disabled={questions.length === 0}
             className={cn(
-              "flex items-center gap-2 px-8 py-3 bg-[#FF6B6B] text-white border-4 border-black rounded-xl hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all font-black uppercase text-sm neo-brutal-shadow-teal",
-              questions.length === 0 && "opacity-50 cursor-not-allowed pointer-events-none grayscale"
+              "btn-shine flex items-center gap-4 px-12 py-5 bg-white text-black rounded-[28px] hover:scale-105 active:scale-95 transition-all font-black uppercase text-xs tracking-[0.4em] shadow-[0_0_50px_rgba(255,255,255,0.2)]",
+              questions.length === 0 && "opacity-30 cursor-not-allowed pointer-events-none grayscale"
             )}
           >
-            <Play size={20} fill="currentColor" />
-            Start Quiz
+            <Play size={20} fill="currentColor" stroke="none" />
+            Initiate Warp
           </Link>
-        </div>
+        </motion.div>
       </div>
 
-      <div className="space-y-4">
-        <h2 className="text-xl font-black uppercase tracking-tighter border-b-4 border-black dark:border-white pb-1 inline-block dark:text-white transition-colors">Curriculum</h2>
+      <div className="space-y-12">
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
+            <Map className="text-violet-400" size={24} />
+            <h2 className="text-xl font-black tracking-[0.4em] text-white uppercase ml-1">Intelligence Map</h2>
+          </div>
+          <div className="h-px flex-1 bg-gradient-to-r from-white/10 via-white/5 to-transparent" />
+        </div>
 
         {questions.length > 0 ? (
-          <div className="grid gap-4">
+          <div className="grid gap-10">
             {questions.map((q, index) => (
               <motion.div 
                 key={q.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ delay: (index % 5) * 0.05 }}
                 className={cn(
-                  "bg-[var(--card-bg)] p-5 rounded-[24px] border-4 border-black transition-all",
-                  flaggedIds.includes(q.id) ? "neo-brutal-shadow-red bg-[#FFF5F5] dark:bg-[#2A1F1F]" : "neo-brutal-shadow hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none"
+                  "glass-card p-6 md:p-8 rounded-[32px] group relative overflow-hidden transition-all duration-500",
+                  flaggedIds.includes(q.id) ? "border-rose-500/20 shadow-[0_0_30px_rgba(244,63,94,0.06)]" : "hover:border-white/10"
                 )}
               >
-                <div className="flex flex-col md:flex-row items-start justify-between gap-4">
-                  <div className="space-y-3 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-[10px] font-black bg-black dark:bg-[#FFE66D] text-white dark:text-black px-2 py-0.5 rounded-full uppercase tracking-tighter leading-none">
-                        Case {index + 1}
-                      </span>
-                      {q.isNoted && (
-                        <span className="text-[10px] font-black bg-[#FFE66D] text-black px-2 py-0.5 border-2 border-black rounded-full uppercase tracking-tighter leading-none flex items-center gap-1">
-                          <Pin size={10} fill="currentColor" /> NOTED
-                        </span>
-                      )}
-                      {flaggedIds.includes(q.id) && (
-                        <span className="text-[10px] font-black text-[#FF6B6B] bg-white dark:bg-gray-800 border-2 border-[#FF6B6B] px-2 py-0.5 rounded-full uppercase tracking-tighter leading-none flex items-center gap-1">
-                          <Flag size={10} fill="currentColor" /> flagged
-                        </span>
-                      )}
+                <div className="flex flex-col lg:flex-row items-start justify-between gap-8">
+                  <div className="space-y-6 flex-1 w-full">
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <div className="bg-white/[0.03] border border-white/[0.05] px-3 py-1 rounded-full flex items-center gap-2">
+                        <div className="w-1 h-1 rounded-full bg-violet-400" />
+                        <span className="text-[8px] font-black text-slate-500 uppercase tracking-[0.3em]">Node {index + 1}</span>
+                      </div>
                     </div>
-                    <p className="text-lg font-bold text-[var(--text-main)] leading-snug tracking-tight transition-colors">{q.questionText}</p>
                     
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <h3 className="text-xl md:text-2xl font-bold text-white leading-tight tracking-tight">
+                      {q.questionText}
+                    </h3>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {(['A', 'B', 'C', 'D'] as const).map(opt => (
                         <div 
                           key={opt} 
                           className={cn(
-                            "flex items-center gap-2 p-3 rounded-xl border-2 transition-all font-bold text-xs",
+                            "flex items-center gap-4 p-3.5 rounded-2xl border transition-all duration-500",
                             q.correctAnswer === opt 
-                              ? "bg-[#4ECDC4]/20 border-[#4ECDC4] text-[var(--text-main)]" 
-                              : "bg-[var(--card-muted)] border-transparent text-[var(--text-muted)]"
+                              ? "bg-cyan-500/5 border-cyan-500/20" 
+                              : "bg-white/[0.01] border-transparent opacity-40"
                           )}
                         >
-                          <span className={cn(
-                            "shrink-0 w-6 h-6 flex items-center justify-center rounded-lg border-2 text-[10px] uppercase font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-colors",
+                          <div className={cn(
+                            "shrink-0 w-8 h-8 flex items-center justify-center rounded-xl border text-[9px] font-black",
                             q.correctAnswer === opt 
-                              ? "border-black bg-black text-white" 
-                              : "border-black bg-[var(--card-bg)] text-[var(--text-main)]"
+                              ? "border-cyan-400 bg-cyan-400 text-black shadow-[0_0_10px_rgba(6,182,212,0.4)]" 
+                              : "border-white/10 bg-white/5 text-slate-600"
                           )}>
                             {opt}
+                          </div>
+                          <span className={cn(
+                            "font-bold text-sm tracking-tight truncate",
+                            q.correctAnswer === opt ? "text-white" : "text-slate-500"
+                          )}>
+                            {q[`option${opt}` as keyof Question]}
                           </span>
-                          <span className="truncate">{q[`option${opt}` as keyof Question]}</span>
                         </div>
                       ))}
                     </div>
                   </div>
                   
                   {isAdminUI && (
-                    <div className="flex md:flex-col gap-2">
+                    <div className="flex lg:flex-col gap-4 w-full lg:w-auto mt-6 lg:mt-0 pt-8 lg:pt-0 border-t lg:border-t-0 lg:border-l border-white/[0.03] lg:pl-10">
                       <Link 
                         to={`/edit/${id}/${q.id}`}
-                        className="bg-[var(--card-bg)] border-2 border-black p-2 rounded-xl hover:bg-[#FFE66D] dark:hover:bg-[#FFE66D] dark:hover:text-black text-[var(--text-main)] transition-all shadow-[2px_2px_0px_0px_#000]"
+                        className="flex-1 lg:w-16 lg:h-16 h-14 flex items-center justify-center rounded-[24px] bg-white/[0.02] border border-white/[0.05] text-slate-500 hover:bg-violet-600 hover:text-white hover:border-violet-500 transition-all shadow-xl group/edit"
                       >
-                        <Edit2 size={16} strokeWidth={3} />
+                        <Edit2 size={24} className="group-hover:rotate-12 transition-transform" />
                       </Link>
                       <button 
                         onClick={() => handleToggleNote(q)}
                         className={cn(
-                          "border-2 border-black p-2 rounded-xl transition-all shadow-[2px_2px_0px_0px_#000]",
-                          q.isNoted ? "bg-[#FFE66D] text-black" : "bg-[var(--card-bg)] text-[var(--text-main)] hover:bg-gray-100"
+                          "flex-1 lg:w-16 lg:h-16 h-14 flex items-center justify-center rounded-[24px] transition-all shadow-xl border",
+                          q.isNoted ? "bg-amber-500 border-amber-400 text-black" : "bg-white/[0.02] border-white/[0.05] text-slate-500 hover:text-white"
                         )}
-                        title={q.isNoted ? "Unnote Question" : "Note Question"}
+                        title={q.isNoted ? "De-prioritize Node" : "Prioritize Node"}
                       >
-                        <Pin size={16} strokeWidth={3} fill={q.isNoted ? "currentColor" : "none"} />
+                        <Pin size={24} fill={q.isNoted ? "currentColor" : "none"} />
                       </button>
                     </div>
                   )}
@@ -181,16 +218,26 @@ export default function SubjectDetail() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-24 bg-[var(--card-bg)] border-4 border-black rounded-[40px] neo-brutal-shadow">
-            <p className="text-gray-400 font-bold text-lg mb-6 tracking-tight">
-              {isAdminUI ? "Your question bank is empty." : "No curriculum available yet."}
+          <div className="text-center py-40 glass-card rounded-[80px]">
+             <div className="relative inline-block mb-12">
+              <div className="w-32 h-32 bg-slate-500/5 rounded-full flex items-center justify-center">
+                <Sparkles className="text-slate-800" size={64} />
+              </div>
+              <motion.div 
+                animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.4, 1] }}
+                transition={{ repeat: Infinity, duration: 4 }}
+                className="absolute inset-0 bg-violet-500/20 blur-3xl rounded-full" 
+              />
+            </div>
+            <p className="text-slate-500 font-bold text-2xl mb-12 max-w-md mx-auto">
+              This intelligence map is currently blank. Ready to deploy new knowledge assets?
             </p>
             {isAdminUI && (
               <Link 
                 to={`/add/${id}`} 
-                className="bg-[#4ECDC4] border-4 border-black px-8 py-3 rounded-xl font-black uppercase text-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all neo-brutal-shadow"
+                className="btn-shine bg-white text-black px-12 py-6 rounded-[32px] font-black uppercase text-xs tracking-widest hover:scale-105 active:scale-95 transition-all shadow-2xl"
               >
-                Add first question
+                Initalize Deployment
               </Link>
             )}
           </div>

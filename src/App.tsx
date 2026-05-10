@@ -15,6 +15,7 @@ import Quiz from './pages/Quiz';
 import AddQuestion from './pages/AddQuestion';
 import EditQuestion from './pages/EditQuestion';
 import Navbar from './components/Navbar';
+import SpaceBackground from './components/SpaceBackground';
 
 import { AdminProvider } from './context/AdminContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -33,8 +34,19 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FDFCF0]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black"></div>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#050510] relative overflow-hidden">
+        <SpaceBackground />
+        <div className="relative z-10 text-center">
+          <div className="w-24 h-24 relative mb-6">
+            <div className="absolute inset-0 border-t-4 border-violet-500 rounded-full animate-spin"></div>
+            <div className="absolute inset-2 border-b-4 border-cyan-500 rounded-full animate-[spin_1.5s_linear_infinite_reverse]"></div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-4 h-4 bg-white rounded-full blur-[2px] animate-pulse"></div>
+            </div>
+          </div>
+          <h2 className="text-2xl font-bold tracking-widest text-[#FFFFFF] uppercase glow-text animate-pulse">Initializing Knowledge Engine</h2>
+          <p className="text-cyan-400 text-xs mt-2 font-mono uppercase tracking-[0.3em]">Connecting to Cosmic Database...</p>
+        </div>
       </div>
     );
   }
@@ -43,9 +55,10 @@ export default function App() {
     <ThemeProvider>
       <AdminProvider>
         <Router>
-          <div className="min-h-screen flex flex-col transition-colors duration-300">
+          <div className="min-h-screen flex flex-col transition-colors duration-300 relative">
+            <SpaceBackground />
             <Navbar user={user} />
-            <main className="flex-1 container mx-auto px-4 py-8 max-w-5xl">
+            <main className="flex-1 container mx-auto px-4 py-8 max-w-6xl relative z-10">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route 

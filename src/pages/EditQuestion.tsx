@@ -1,47 +1,59 @@
 import { useState, useEffect, FormEvent } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { quizService } from '../services/quizService';
 import { Question } from '../types';
-import { ChevronLeft, Save, AlertCircle, Trash2 } from 'lucide-react';
+import { ChevronLeft, Save, AlertCircle, Zap, ArrowLeft, RefreshCcw, Layers } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 
 export default function EditQuestion() {
-  const { subjectId, questionId } = useParams<{ subjectId: string; questionId: string }>();
+  const { sid, qid } = useParams<{ sid: string; qid: string }>();
   const navigate = useNavigate();
   
   const [questionText, setQuestionText] = useState('');
   const [options, setOptions] = useState({ A: '', B: '', C: '', D: '' });
   const [correctAnswer, setCorrectAnswer] = useState<'A' | 'B' | 'C' | 'D'>('A');
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (questionId && subjectId) {
+    if (sid && qid) {
       loadQuestion();
     }
-  }, [questionId, subjectId]);
+  }, [sid, qid]);
 
   const loadQuestion = async () => {
-    const questions = await quizService.getQuestions(subjectId!);
-    const q = questions.find(item => item.id === questionId);
-    if (q) {
-      setQuestionText(q.questionText);
-      setOptions({ A: q.optionA, B: q.optionB, C: q.optionC, D: q.optionD });
-      setCorrectAnswer(q.correctAnswer);
+    try {
+      const questions = await quizService.getQuestions(sid!);
+      const q = questions.find(item => item.id === qid);
+      if (q) {
+        setQuestionText(q.questionText);
+        setOptions({
+          A: q.optionA,
+          B: q.optionB,
+          C: q.optionC,
+          D: q.optionD
+        });
+        setCorrectAnswer(q.correctAnswer);
+      }
       setLoading(false);
-    } else {
-      setError('Question not found');
+    } catch (err) {
+      setError('Failed to recalibrate question node.');
+      setLoading(false);
     }
   };
 
   const handleSave = async (e: FormEvent) => {
     e.preventDefault();
-    if (!questionId || !questionText) return;
+    if (!sid || !qid || !questionText || !options.A || !options.B || !options.C || !options.D) {
+      setError('Protocol error: Signal incomplete.');
+      return;
+    }
 
     setIsSubmitting(true);
     try {
-      await quizService.updateQuestion(questionId, {
+      await quizService.updateQuestion(qid, {
         questionText,
         optionA: options.A,
         optionB: options.B,
@@ -49,107 +61,123 @@ export default function EditQuestion() {
         optionD: options.D,
         correctAnswer
       });
-      navigate(`/subject/${subjectId}`);
+      navigate(`/subject/${sid}`);
     } catch (err) {
-      setError('Failed to update question');
+      setError('Transmission loss during reconfiguration.');
       setIsSubmitting(false);
     }
   };
 
-  const handleDelete = async () => {
-    if (!window.confirm('Are you sure you want to delete this question?')) return;
-    try {
-      await quizService.deleteQuestion(questionId!);
-      navigate(`/subject/${subjectId}`);
-    } catch (err) {
-      setError('Failed to delete question');
-    }
-  };
-
-  if (loading) return <div className="py-20 text-center">Loading...</div>;
+  if (loading) return null;
 
   return (
-    <div className="max-w-3xl mx-auto space-y-10">
-      <div className="flex items-center justify-between">
-        <div className="space-y-2">
-          <Link to={`/subject/${subjectId}`} className="flex items-center gap-2 text-sm font-black uppercase text-gray-400 hover:text-black dark:hover:text-white transition-colors mb-4 group">
-            <div className="bg-white dark:bg-[#2D2D2D] border-2 border-black p-1 rounded group-hover:bg-[#FFE66D] transition-all">
-              <ChevronLeft size={16} strokeWidth={3} />
-            </div>
-            Back to Subject
-          </Link>
-          <h1 className="text-5xl font-black text-[#1A1A1A] dark:text-white uppercase tracking-tighter transition-colors">Edit Content</h1>
-        </div>
-        <button 
-          onClick={handleDelete}
-          className="bg-white dark:bg-[#2D2D2D] border-4 border-black p-4 rounded-2xl hover:bg-[#FF6B6B] hover:text-white transition-all neo-brutal-shadow text-black dark:text-white"
-        >
-          <Trash2 size={24} strokeWidth={3} />
-        </button>
-      </div>
-
-      <form onSubmit={handleSave} className="bg-white dark:bg-[#1E1E1E] border-4 border-black p-10 rounded-[40px] neo-brutal-shadow-lg space-y-8 transition-colors">
-        {error && (
-          <div className="flex items-center gap-3 p-4 bg-[#FF6B6B] text-white border-4 border-black rounded-xl font-black text-sm">
-            <AlertCircle size={20} strokeWidth={3} />
-            <span>{error}</span>
-          </div>
-        )}
-
-        <div className="space-y-3">
-          <label className="block text-sm font-black uppercase tracking-widest text-[#1A1A1A] dark:text-white transition-colors">Entry Content</label>
-          <textarea 
-            required
-            rows={4}
-            className="w-full px-5 py-3 bg-[var(--card-bg)] text-[var(--text-main)] border-4 border-black rounded-2xl focus:outline-none font-bold transition-colors"
-            value={questionText}
-            onChange={(e) => setQuestionText(e.target.value)}
+    <div className="max-w-3xl mx-auto space-y-16 pb-32">
+       <motion.div 
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="space-y-6"
+      >
+        <Link to={`/subject/${sid}`} className="group inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.05] text-[10px] font-black text-slate-500 hover:text-white transition-all uppercase tracking-[0.2em] hover:bg-white/[0.08]">
+           <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+          Back to Knowledge Nebula
+        </Link>
+        <div className="relative">
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tighter leading-none inline-block">
+            <span className="text-gradient">Recalibrate</span> <span className="text-gradient-cosmic glow-text">Node</span>
+          </h1>
+          <motion.div 
+             animate={{ opacity: [0.2, 0.4, 0.2], scale: [1, 1.1, 1] }}
+             transition={{ repeat: Infinity, duration: 5 }}
+             className="absolute -top-10 -right-20 w-48 h-48 bg-cyan-500/10 blur-[90px] rounded-full pointer-events-none" 
           />
         </div>
+        <p className="text-xl font-medium text-slate-500 max-w-xl leading-relaxed">
+          Modifying intelligence node ID: <span className="font-mono text-cyan-400 text-xs">{qid}</span>. Ensure data integrity after update.
+        </p>
+      </motion.div>
 
-        <div className="grid gap-6">
-          {(['A', 'B', 'C', 'D'] as const).map(key => (
-            <div key={key} className="space-y-2">
-              <div className="flex items-center justify-between px-1">
-                <label className="text-xs font-black uppercase tracking-widest text-gray-400">Variant {key}</label>
-                <label 
+      <form onSubmit={handleSave} className="space-y-10">
+        <div className="glass-card p-12 rounded-[56px] space-y-12 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-1/2 h-px bg-gradient-to-l from-violet-500 to-transparent" />
+          
+          <AnimatePresence>
+            {error && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex items-center gap-3 p-5 bg-rose-500/5 border border-rose-500/20 text-rose-400 rounded-[24px] font-bold text-xs"
+              >
+                <AlertCircle size={18} />
+                <span>{error}</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 ml-2">
+              <RefreshCcw size={14} className="text-violet-500 animate-[spin_4s_linear_infinite]" />
+              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Core Transmission</label>
+            </div>
+            <textarea 
+              required
+              rows={4}
+              placeholder="Update signal content..."
+              className="w-full px-10 py-8 bg-white/[0.015] border border-white/[0.04] rounded-[40px] focus:outline-none focus:border-violet-500/50 text-2xl font-bold text-white transition-all placeholder:text-slate-800 focus:bg-white/[0.03]"
+              value={questionText}
+              onChange={(e) => setQuestionText(e.target.value)}
+            />
+          </div>
+
+          <div className="grid gap-5">
+            {(['A', 'B', 'C', 'D'] as const).map((key) => (
+              <div key={key} className="relative group">
+                <div className="absolute left-6 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl bg-white/[0.05] border border-white/[0.05] flex items-center justify-center font-black text-xs text-slate-500 transition-all group-focus-within:border-violet-500/50 group-focus-within:text-white">
+                  {key}
+                </div>
+                <input 
+                  required
+                  type="text" 
+                  placeholder={`Variant ${key}...`}
                   className={cn(
-                    "flex items-center gap-2 cursor-pointer px-3 py-1 rounded-full border-2 border-transparent transition-all",
-                    correctAnswer === key ? "bg-[#4ECDC4] border-black" : "hover:bg-gray-100"
+                    "w-full pl-20 pr-32 py-6 border rounded-[32px] focus:outline-none font-bold transition-all text-lg",
+                    correctAnswer === key 
+                      ? "bg-cyan-500/[0.03] border-cyan-500/30 text-white" 
+                      : "bg-white/[0.01] border-white/[0.04] text-slate-400 focus:text-white focus:bg-white/[0.03]"
+                  )}
+                  value={options[key]}
+                  onChange={(e) => setOptions({ ...options, [key]: e.target.value })}
+                />
+                <button
+                  type="button"
+                  onClick={() => setCorrectAnswer(key)}
+                  className={cn(
+                    "absolute right-4 top-1/2 -translate-y-1/2 px-5 py-2 rounded-2xl border transition-all text-[8px] font-black uppercase tracking-widest",
+                    correctAnswer === key ? "bg-cyan-500 text-black border-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.4)]" : "bg-white/5 border-transparent text-slate-600 hover:text-slate-400"
                   )}
                 >
-                  <span className="text-[10px] font-black uppercase text-black">Correct?</span>
-                  <input 
-                    type="radio" 
-                    name="correctAnswer" 
-                    checked={correctAnswer === key}
-                    onChange={() => setCorrectAnswer(key)}
-                    className="w-4 h-4 text-black border-2 border-black focus:ring-0"
-                  />
-                </label>
+                  {correctAnswer === key ? 'Validated Path' : 'Set as Correct'}
+                </button>
               </div>
-              <input 
-                required
-                type="text" 
-                className={cn(
-                  "w-full px-5 py-3 border-4 border-black rounded-2xl focus:outline-none font-bold transition-all",
-                  correctAnswer === key ? "bg-[#4ECDC4]/10 dark:bg-[#4ECDC4]/20 neo-brutal-shadow-teal scale-[1.01]" : "bg-[var(--card-bg)] text-[var(--text-main)]"
-                )}
-                value={options[key]}
-                onChange={(e) => setOptions({ ...options, [key]: e.target.value })}
-              />
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        <button 
-          type="submit" 
-          disabled={isSubmitting}
-          className="w-full bg-[#FFE66D] text-black py-4 rounded-2xl border-4 border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all font-black uppercase tracking-widest text-lg neo-brutal-shadow disabled:opacity-50 flex items-center justify-center gap-3"
-        >
-          <Save size={24} strokeWidth={3} />
-          {isSubmitting ? 'Syncing...' : 'Update Record'}
-        </button>
+          <div className="flex gap-4 pt-6">
+            <Link 
+              to={`/subject/${sid}`}
+              className="flex-1 px-8 py-7 rounded-[32px] border border-white/5 text-slate-500 font-black uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-3 hover:bg-white/5 transition-all"
+            >
+              Abort Signal
+            </Link>
+            <button 
+              type="submit" 
+              disabled={isSubmitting}
+              className="btn-shine flex-[2] bg-white text-black py-7 rounded-[32px] font-black uppercase tracking-[0.4em] text-base hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_50px_rgba(255,255,255,0.2)] disabled:opacity-30 flex items-center justify-center gap-4"
+            >
+              <Zap size={24} className="fill-black" />
+              {isSubmitting ? 'Syncing...' : 'Override Node'}
+            </button>
+          </div>
+        </div>
       </form>
     </div>
   );

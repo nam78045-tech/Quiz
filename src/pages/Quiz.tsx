@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { quizService } from '../services/quizService';
 import { Question } from '../types';
-import { ChevronLeft, Flag, CheckCircle, XCircle, RotateCcw, Trophy, ArrowRight, Home } from 'lucide-react';
+import { ChevronLeft, Flag, CheckCircle, XCircle, RotateCcw, Trophy, ArrowRight, Home, Sparkles, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 
@@ -61,7 +61,6 @@ export default function Quiz() {
 
   const currentQuestion = questions[currentIndex];
 
-  // Randomize options for each question
   const shuffledOptions = useMemo(() => {
     if (!currentQuestion) return [];
     const opts: ShuffledOption[] = [
@@ -116,13 +115,18 @@ export default function Quiz() {
     localStorage.setItem('flagged_' + id, JSON.stringify(newFlags));
   };
 
-  if (loading) return (
-    <div className="flex items-center justify-center py-20">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+  if (loading) return null; // Let App.tsx handle the loading state
+
+  if (questions.length === 0) return (
+    <div className="text-center py-20 glass-card rounded-[40px] max-w-2xl mx-auto">
+      <Sparkles size={48} className="mx-auto mb-4 text-cyan-400 animate-pulse" />
+      <h2 className="text-2xl font-bold text-white uppercase tracking-widest">No Intelligence Data</h2>
+      <p className="text-slate-400 mt-2">This constellation currently holds no knowledge nodes.</p>
+      <Link to="/" className="mt-8 inline-flex items-center gap-2 bg-white text-black px-6 py-3 rounded-2xl font-bold">
+        Return to Command
+      </Link>
     </div>
   );
-
-  if (questions.length === 0) return <div className="text-center py-20">No questions found.</div>;
 
   if (isFinished) {
     const percentage = Math.round((score / questions.length) * 100);
@@ -130,120 +134,117 @@ export default function Quiz() {
       <motion.div 
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="max-w-md mx-auto text-center space-y-6 py-6"
+        className="max-w-2xl mx-auto text-center space-y-10 py-12"
       >
-        <div className="space-y-3">
-          <div className="relative inline-block">
-            <div className="w-20 h-20 bg-[#FFE66D] border-4 border-black rounded-2xl mx-auto flex items-center justify-center neo-brutal-shadow">
-              <Trophy size={40} className="text-black" />
-            </div>
-            <motion.div 
-              initial={{ scale: 0, rotate: -20 }}
-              animate={{ scale: 1, rotate: -10 }}
-              transition={{ delay: 0.3 }}
-              className="absolute -top-3 -right-3 bg-[#FF6B6B] border-2 border-black text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter shadow-[2px_2px_0px_0px_#000]"
-            >
-              Master!
-            </motion.div>
-          </div>
-          <h1 className="text-3xl font-black text-black dark:text-white uppercase tracking-tighter">Quiz Complete!</h1>
-          <p className="text-sm font-bold text-gray-500">You've dominated this session.</p>
+        <div className="space-y-4">
+          <motion.div 
+            animate={{ rotate: [0, -10, 10, 0] }}
+            transition={{ repeat: Infinity, duration: 5 }}
+            className="w-24 h-24 bg-gradient-to-br from-violet-600 to-cyan-500 rounded-[32px] mx-auto flex items-center justify-center shadow-[0_0_30px_rgba(139,92,246,0.3)]"
+          >
+            <Trophy size={48} className="text-white" />
+          </motion.div>
+          <h1 className="text-4xl font-extrabold text-white tracking-tighter uppercase glow-text">Mission Accomplished</h1>
+          <p className="text-slate-400 font-medium">You've traversed the knowledge nebula successfully.</p>
         </div>
 
-        <div className="bg-[var(--card-bg)] border-4 border-black rounded-[32px] p-6 neo-brutal-shadow-lg space-y-6">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 bg-[#4ECDC4] border-2 border-black rounded-2xl shadow-[4px_4px_0px_0px_#000]">
-              <span className="block text-[8px] font-black text-black uppercase tracking-widest mb-1 opacity-60">Score</span>
-              <span className="text-2xl font-black text-black">{score}/{questions.length}</span>
-            </div>
-            <div className="p-4 bg-[#FFE66D] border-2 border-black rounded-2xl shadow-[4px_4px_0px_0px_#000]">
-              <span className="block text-[8px] font-black text-black uppercase tracking-widest mb-1 opacity-60">Accuracy</span>
-              <span className="text-2xl font-black text-black">{percentage}%</span>
-            </div>
+        <div className="grid grid-cols-2 gap-6">
+          <div className="glass-card p-8 rounded-[40px] border-cyan-500/20">
+            <span className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Efficiency</span>
+            <span className="text-4xl font-black text-cyan-400">{score}/{questions.length}</span>
           </div>
+          <div className="glass-card p-8 rounded-[40px] border-violet-500/20">
+            <span className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Sync Accuracy</span>
+            <span className="text-4xl font-black text-violet-400">{percentage}%</span>
+          </div>
+        </div>
 
-          <div className="space-y-4">
-            {wrongQuestions.length > 0 && !isRetryMode && (
-              <button 
-                onClick={handleRetryWrong}
-                className="w-full flex items-center justify-center gap-3 bg-[#4ECDC4] border-4 border-black text-black py-4 rounded-2xl hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all font-black uppercase text-sm neo-brutal-shadow"
-              >
-                <RotateCcw size={20} strokeWidth={3} />
-                Fix Mistakes ({wrongQuestions.length})
-              </button>
-            )}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
+          {wrongQuestions.length > 0 && !isRetryMode && (
             <button 
-              onClick={() => navigate(`/subject/${id}`)}
-              className="w-full flex items-center justify-center gap-3 bg-[var(--card-bg)] border-4 border-black text-[var(--text-main)] py-4 rounded-2xl hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all font-black uppercase text-sm neo-brutal-shadow-yellow"
+              onClick={handleRetryWrong}
+              className="px-8 py-5 rounded-[24px] bg-white text-black font-bold uppercase tracking-widest text-sm flex items-center justify-center gap-3 hover:scale-105 transition-all shadow-xl"
             >
-              <Home size={20} strokeWidth={3} />
-              Subject Overview
+              <RotateCcw size={18} />
+              Re-sync Mistakes ({wrongQuestions.length})
             </button>
-          </div>
+          )}
+          <button 
+            onClick={() => navigate(`/subject/${id}`)}
+            className="px-8 py-5 rounded-[24px] bg-white/5 border border-white/10 text-white font-bold uppercase tracking-widest text-sm flex items-center justify-center gap-3 hover:bg-white/10 transition-all"
+          >
+            <Home size={18} />
+            Command Center
+          </button>
         </div>
       </motion.div>
     );
   }
 
   return (
-    <div className="max-w-xl mx-auto space-y-6">
+    <div className="max-w-2xl mx-auto space-y-6 py-4">
       {/* Quiz Header */}
-      <div className="flex items-center justify-between gap-4">
-        <Link to={id === 'noted-practice' ? '/' : `/subject/${id}`} className="bg-white dark:bg-[#2D2D2D] border-2 border-black p-2 rounded-xl text-black dark:text-white neo-brutal-shadow transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none">
-          <ChevronLeft size={20} strokeWidth={3} />
+      <div className="flex items-center gap-4">
+        <Link to={id === 'noted-practice' ? '/' : `/subject/${id}`} className="glass-card p-2 rounded-xl text-slate-400 hover:text-white transition-colors">
+          <ChevronLeft size={20} />
         </Link>
-        <div className="flex-1">
-          <div className="h-3 bg-white dark:bg-[#1A1A1A] border-4 border-black rounded-full overflow-hidden neo-brutal-shadow">
+        <div className="flex-1 space-y-2">
+          <div className="h-2 bg-white/5 rounded-full overflow-hidden border border-white/5">
             <motion.div 
               initial={{ width: 0 }}
               animate={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
-              className="h-full bg-[#4ECDC4] border-r-4 border-black"
+              className="h-full bg-gradient-to-r from-violet-500 to-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.5)]"
             />
           </div>
-          <p className="text-center text-[8px] font-black text-black dark:text-gray-400 mt-2 tracking-[0.2em] uppercase">
-            Progress: {currentIndex + 1} / {questions.length}
-          </p>
+          <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-[0.2em] text-slate-500">
+            <span>Neural Sync</span>
+            <span className="text-cyan-400">{currentIndex + 1} / {questions.length} Nodes</span>
+          </div>
         </div>
         <button 
           onClick={toggleFlag}
           className={cn(
-            "p-2 rounded-xl transition-all border-2 border-black neo-brutal-shadow",
+            "p-2 rounded-xl transition-all border",
             flaggedIds.includes(currentQuestion?.id) 
-              ? "bg-[#FF6B6B] text-white shadow-none translate-x-0.5 translate-y-0.5" 
-              : "bg-white dark:bg-[#2D2D2D] text-gray-300 dark:text-gray-600 hover:text-black dark:hover:text-white"
+              ? "bg-rose-500/20 border-rose-500/50 text-rose-400 shadow-[0_0_15px_rgba(244,63,94,0.3)]" 
+              : "bg-white/5 border-white/10 text-slate-500"
           )}
         >
-          <Flag size={18} strokeWidth={3} fill={flaggedIds.includes(currentQuestion?.id) ? "currentColor" : "none"} />
+          <Flag size={18} fill={flaggedIds.includes(currentQuestion?.id) ? "currentColor" : "none"} />
         </button>
       </div>
 
       <AnimatePresence mode="wait">
         <motion.div 
           key={currentIndex}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
           className="space-y-6"
         >
-          <div className="bg-[var(--card-bg)] border-4 border-black p-6 rounded-[32px] neo-brutal-shadow-lg relative">
-            <div className="absolute -top-3 left-6 bg-black dark:bg-[var(--primary-yellow)] text-white dark:text-black px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest">
-              Prompt
+          <div className="glass-card p-6 md:p-8 rounded-[32px] relative overflow-hidden group">
+            <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-violet-500 to-cyan-500" />
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center text-violet-400">
+                <Zap size={16} className="fill-violet-400/20" />
+              </div>
+              <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Active Transmission</span>
             </div>
-            <h2 className="text-xl font-black text-[var(--text-main)] leading-tight tracking-tight mt-2 transition-colors">
+            <h2 className="text-2xl font-bold text-white leading-tight tracking-tight">
               {currentQuestion.questionText}
             </h2>
           </div>
 
           <div className="grid gap-3">
-            {shuffledOptions.map((opt) => {
+            {shuffledOptions.map((opt, idx) => {
               const isSelected = selectedOption === opt.key;
               const isCorrect = opt.key === currentQuestion.correctAnswer;
               
-              let stateClasses = "bg-[var(--card-bg)] hover:bg-[#F9F9F9] dark:hover:bg-[#2D2D2D] neo-brutal-shadow";
+              let stateClasses = "glass-card hover:bg-white/[0.07] border-white/10";
               if (showResult) {
-                if (isCorrect) stateClasses = "bg-[#4ECDC4] ring-2 ring-black scale-[1.01] z-10 neo-brutal-shadow shadow-none translate-x-0.5 translate-y-0.5";
-                else if (isSelected) stateClasses = "bg-[#FF6B6B] opacity-90 grayscale-[0.2] shadow-none translate-x-0.5 translate-y-0.5";
-                else stateClasses = "bg-[var(--card-bg)] dark:bg-black/20 opacity-40 grayscale pointer-events-none";
+                if (isCorrect) stateClasses = "bg-cyan-500/20 border-cyan-500/50 glow-border text-white";
+                else if (isSelected) stateClasses = "bg-rose-500/20 border-rose-500/50 text-rose-400 scale-[0.98] blur-[0.5px]";
+                else stateClasses = "opacity-30 blur-sm grayscale pointer-events-none";
               }
 
               return (
@@ -252,19 +253,20 @@ export default function Quiz() {
                   disabled={showResult}
                   onClick={() => handleSelect(opt.key)}
                   className={cn(
-                    "w-full p-4 rounded-2xl border-4 border-black text-left transition-all relative flex items-center gap-4 group",
-                    stateClasses
+                    "w-full p-4 rounded-2xl text-left transition-all duration-300 relative flex items-center gap-4 group overflow-hidden",
+                    stateClasses,
+                    !showResult && "hover:translate-x-1"
                   )}
                 >
-                  <span className={cn(
-                    "shrink-0 w-8 h-8 border-2 border-black rounded-lg flex items-center justify-center font-black text-xs transition-all",
-                    showResult && isCorrect ? "bg-white text-black" : 
-                    showResult && isSelected ? "bg-white text-[#FF6B6B]" :
-                    "bg-[var(--card-muted)] text-[var(--text-muted)] group-hover:bg-[var(--primary-yellow)] group-hover:text-black shadow-[2px_2px_0px_0px_#000]"
+                  <div className={cn(
+                    "shrink-0 w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm transition-all",
+                    showResult && isCorrect ? "bg-cyan-400 text-black shadow-[0_0_15px_rgba(6,182,212,0.6)]" : 
+                    showResult && isSelected ? "bg-rose-500 text-white" :
+                    "bg-white/5 border border-white/10 text-slate-500 group-hover:text-white group-hover:border-white/30"
                   )}>
-                    {showResult ? (isCorrect ? <CheckCircle size={18} strokeWidth={3} /> : (isSelected ? <XCircle size={18} strokeWidth={3} /> : opt.key)) : opt.key}
-                  </span>
-                  <span className="font-bold text-base text-[var(--text-main)] leading-snug transition-colors">{opt.text}</span>
+                    {showResult ? (isCorrect ? <CheckCircle size={18} /> : (isSelected ? <XCircle size={18} /> : opt.key)) : opt.key}
+                  </div>
+                  <span className="font-bold text-base text-white/90 leading-snug">{opt.text}</span>
                 </button>
               );
             })}
@@ -272,21 +274,23 @@ export default function Quiz() {
         </motion.div>
       </AnimatePresence>
 
-      {showResult && (
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="pt-2"
-        >
-          <button 
-            onClick={handleNext}
-            className="w-full bg-[#FFE66D] text-black py-4 rounded-2xl border-4 border-black hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all font-black uppercase tracking-widest text-lg neo-brutal-shadow-teal flex items-center justify-center gap-2"
+      <AnimatePresence>
+        {showResult && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
           >
-            {currentIndex < questions.length - 1 ? 'Next' : 'Finish'}
-            <ArrowRight size={20} strokeWidth={3} />
-          </button>
-        </motion.div>
-      )}
+            <button 
+              onClick={handleNext}
+              className="btn-shine w-full bg-white text-black py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-sm hover:scale-[1.02] active:scale-95 transition-all shadow-xl flex items-center justify-center gap-3"
+            >
+              {currentIndex < questions.length - 1 ? 'Next Memory Core' : 'Mission Result'}
+              <ArrowRight size={18} />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

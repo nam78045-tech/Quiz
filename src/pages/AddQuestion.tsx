@@ -1,8 +1,9 @@
 import { useState, FormEvent } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { quizService } from '../services/quizService';
-import { ChevronLeft, Save, Sparkles, AlertCircle } from 'lucide-react';
+import { ChevronLeft, Save, Sparkles, AlertCircle, Zap, ArrowLeft, Cpu, Terminal, Layers } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { motion, AnimatePresence } from 'motion/react';
 
 export default function AddQuestion() {
   const { id } = useParams<{ id: string }>();
@@ -13,11 +14,15 @@ export default function AddQuestion() {
   const [correctAnswer, setCorrectAnswer] = useState<'A' | 'B' | 'C' | 'D'>('A');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [isParsing, setIsParsing] = useState(false);
 
-  const parseText = () => {
+  const parseText = async () => {
     if (!rawText.trim()) return;
+    setIsParsing(true);
+    
+    // Artificial delay for "Processing" feel
+    await new Promise(r => setTimeout(r, 800));
 
-    // Enhanced regex to catch A), A:, A., [A] followed by space or line break
     const splitRegex = /(?:\n|^)(?=[A-D][).:\-\]])/i;
     const parts = rawText.split(splitRegex).map(p => p.trim()).filter(Boolean);
 
@@ -31,7 +36,6 @@ export default function AddQuestion() {
       });
       setError('');
     } else {
-      // Fallback: try different split if parts are missing
       const altSplit = /\s+(?=[A-D][).:\-\]])/i;
       const altParts = rawText.split(altSplit).map(p => p.trim()).filter(Boolean);
       
@@ -45,15 +49,16 @@ export default function AddQuestion() {
         });
         setError('');
       } else {
-        setError('Could not clearly identify 4 options. Please check formatting (e.g. A) Option)');
+        setError('DATA MISMATCH: Protocol requires A) B) C) D) sequence.');
       }
     }
+    setIsParsing(false);
   };
 
   const handleSave = async (e: FormEvent) => {
     e.preventDefault();
     if (!id || !questionText || !options.A || !options.B || !options.C || !options.D) {
-      setError('Please fill in all fields');
+      setError('CRITICAL ERROR: Neural linkage incomplete.');
       return;
     }
 
@@ -70,138 +75,172 @@ export default function AddQuestion() {
       });
       navigate(`/subject/${id}`);
     } catch (err) {
-      setError('Failed to save question');
+      setError('UPLINK FAILED: Connection to cosmic database severed.');
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-10">
-      <div className="space-y-2">
-        <Link to={`/subject/${id}`} className="flex items-center gap-2 text-sm font-black uppercase text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors mb-4 group">
-          <div className="bg-white dark:bg-[#2D2D2D] border-2 border-black p-1 rounded group-hover:bg-[#4ECDC4] transition-all">
-            <ChevronLeft size={16} strokeWidth={3} />
-          </div>
-          Back to Subject
+    <div className="max-w-4xl mx-auto space-y-16 pb-32">
+      {/* Header with improved typography */}
+      <motion.div 
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="space-y-6"
+      >
+        <Link to={`/subject/${id}`} className="group inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.05] text-[10px] font-black text-slate-500 hover:text-white transition-all uppercase tracking-[0.2em] hover:bg-white/[0.08]">
+           <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+          Back to Galactic Sector
         </Link>
-        <h1 className="text-5xl font-black text-[#1A1A1A] dark:text-white uppercase tracking-tighter transition-colors">Add Knowledge</h1>
-        <p className="text-lg font-bold text-gray-500">Manual entry or high-speed regex parsing.</p>
-      </div>
+        <div className="relative">
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tighter leading-none inline-block">
+            <span className="text-gradient">Inject</span> <span className="text-gradient-cosmic glow-text">Intelligence</span>
+          </h1>
+          <motion.div 
+            animate={{ opacity: [0.3, 0.6, 0.3] }}
+            transition={{ repeat: Infinity, duration: 4 }}
+            className="absolute -top-10 -right-20 w-40 h-40 bg-violet-500/10 blur-[80px] rounded-full pointer-events-none" 
+          />
+        </div>
+        <p className="text-xl font-medium text-slate-500 max-w-2xl leading-relaxed">
+          Initialize new knowledge fragments for the neural network. Use the AI parser for rapid deployment or manual injection for precision.
+        </p>
+      </motion.div>
 
-      <div className="grid gap-10">
-        {/* Quick Paste Segment */}
-        <section className="bg-[#4ECDC4] border-4 border-black p-8 rounded-[40px] neo-brutal-shadow-lg space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-black uppercase tracking-tighter text-black flex items-center gap-2">
-              <Sparkles size={20} fill="currentColor" /> Regex Parser
-            </h2>
+      <div className="grid lg:grid-cols-[1.2fr,1fr] gap-12 items-start">
+        {/* Parser Panel - More Techy */}
+        <motion.section 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.1 }}
+          className="glass-card p-10 rounded-[48px] border-cyan-500/10 group relative"
+        >
+          <div className="flex items-center justify-between mb-10">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 flex items-center justify-center text-cyan-400">
+                <Cpu size={24} />
+              </div>
+              <div>
+                <h2 className="text-xs font-black uppercase tracking-[0.3em] text-cyan-400">Smart Link Parser</h2>
+                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">Automated Extraction</p>
+              </div>
+            </div>
             <button 
               onClick={parseText}
-              className="bg-[#FFE66D] border-4 border-black px-6 py-2 rounded-xl font-black uppercase text-xs hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all neo-brutal-shadow"
+              disabled={isParsing || !rawText}
+              className={cn(
+                "btn-shine px-6 py-3 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all shadow-2xl disabled:opacity-30",
+                isParsing ? "bg-slate-800 text-slate-500" : "bg-cyan-500 text-black hover:scale-105 active:scale-95 shadow-cyan-500/20"
+              )}
             >
-              Parse Raw Text
+              {isParsing ? 'Processing...' : 'Deep Scan'}
             </button>
           </div>
-        <textarea 
-          placeholder="Paste raw trắc nghiệm questions here...&#10;Q: Capital of France?&#10;A) Paris&#10;B) Lyon..."
-          rows={6}
-          className="w-full p-4 bg-[var(--card-bg)] text-[var(--text-main)] border-4 border-black rounded-2xl focus:outline-none font-mono text-sm leading-relaxed transition-colors"
-          value={rawText}
-          onChange={(e) => setRawText(e.target.value)}
-        />
-          <div className="flex flex-col sm:flex-row items-center gap-4 p-4 bg-black/5 rounded-2xl border-4 border-black border-dashed">
-            <p className="text-sm font-black uppercase text-black/60 shrink-0">Mark Correct Answer:</p>
-            <div className="flex gap-2 w-full sm:w-auto">
-              {(['A', 'B', 'C', 'D'] as const).map(key => (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => setCorrectAnswer(key)}
-                  className={cn(
-                    "flex-1 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl border-4 border-black font-black transition-all neo-brutal-shadow-teal",
-                    correctAnswer === key ? "bg-[#FFE66D] translate-x-0.5 translate-y-0.5 shadow-none" : "bg-white hover:bg-gray-50"
-                  )}
-                >
-                  {key}
-                </button>
-              ))}
+          
+          <div className="relative">
+            <div className="absolute top-4 left-4 text-cyan-500/30 flex items-center gap-2 pointer-events-none">
+              <Terminal size={14} />
+              <span className="text-[8px] font-mono font-bold tracking-widest">RAW_DATA_INPUT</span>
             </div>
-            <button 
-              type="submit"
-              form="manual-form"
-              className="w-full sm:w-auto px-6 py-3 bg-[#FF6B6B] border-4 border-black rounded-xl font-black uppercase text-xs text-white neo-brutal-shadow hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all ml-auto"
-            >
-              Quick Save
-            </button>
-          </div>
-        </section>
-
-        {/* Manual Form */}
-        <form id="manual-form" onSubmit={handleSave} className="bg-white dark:bg-[#1E1E1E] border-4 border-black p-10 rounded-[40px] neo-brutal-shadow-lg space-y-8 transition-colors">
-          {error && (
-            <div className="flex items-center gap-3 p-4 bg-[#FF6B6B] text-white border-4 border-black rounded-xl font-black text-sm">
-              <AlertCircle size={20} strokeWidth={3} />
-              <span>{error}</span>
-            </div>
-          )}
-
-          <div className="space-y-3">
-            <label className="block text-sm font-black uppercase tracking-widest text-[#1A1A1A] dark:text-white transition-colors">Entry Content</label>
             <textarea 
-              required
-              rows={4}
-              placeholder="Type your question prompt here..."
-              className="w-full px-5 py-3 bg-[var(--card-bg)] text-[var(--text-main)] border-4 border-black rounded-2xl focus:outline-none font-bold transition-colors"
-              value={questionText}
-              onChange={(e) => setQuestionText(e.target.value)}
+              placeholder="Waiting for input stream..."
+              rows={8}
+              className="w-full pt-12 p-8 bg-black/40 border border-white/[0.05] rounded-[32px] focus:outline-none focus:border-cyan-500/50 text-white font-mono text-sm leading-loose transition-all placeholder:text-slate-800 focus:bg-black/60 shadow-inner"
+              value={rawText}
+              onChange={(e) => setRawText(e.target.value)}
             />
           </div>
+          
+          <div className="mt-8 flex items-center gap-3 text-slate-600">
+            <div className="w-1 h-1 rounded-full bg-cyan-500/50" />
+            <p className="text-[10px] uppercase font-black tracking-widest">Supported: Q &rarr; A) B) C) D)</p>
+          </div>
+        </motion.section>
 
-          <div className="grid gap-6">
-            {(['A', 'B', 'C', 'D'] as const).map(key => (
-              <div key={key} className="space-y-2">
-                <div className="flex items-center justify-between px-1">
-                  <label className="text-xs font-black uppercase tracking-widest text-gray-400">Variant {key}</label>
-                  <label 
-                    className={cn(
-                      "flex items-center gap-2 cursor-pointer px-3 py-1 rounded-full border-2 border-transparent transition-all",
-                      correctAnswer === key ? "bg-[#4ECDC4] border-black" : "hover:bg-gray-100"
-                    )}
-                  >
-                    <span className="text-[10px] font-black uppercase text-black">Correct?</span>
-                    <input 
-                      type="radio" 
-                      name="correctAnswer" 
-                      checked={correctAnswer === key}
-                      onChange={() => setCorrectAnswer(key)}
-                      className="w-4 h-4 text-black border-2 border-black focus:ring-0"
-                    />
-                  </label>
-                </div>
-                <input 
-                  required
-                  type="text" 
-                  placeholder={`Option ${key} text...`}
-                  className={cn(
-                    "w-full px-5 py-3 border-4 border-black rounded-2xl focus:outline-none font-bold transition-all",
-                    correctAnswer === key ? "bg-[#4ECDC4]/10 dark:bg-[#4ECDC4]/20 neo-brutal-shadow-teal scale-[1.01]" : "bg-[var(--card-bg)] text-[var(--text-main)]"
-                  )}
-                  value={options[key]}
-                  onChange={(e) => setOptions({ ...options, [key]: e.target.value })}
-                />
-              </div>
-            ))}
+        {/* Manual Configuration */}
+        <motion.div
+           initial={{ opacity: 0, x: 20 }}
+           animate={{ opacity: 1, x: 0 }}
+           transition={{ delay: 0.2 }}
+           className="space-y-8"
+        >
+          <div className="flex items-center gap-4 px-4">
+            <Layers size={18} className="text-violet-500" />
+            <h2 className="text-xs font-black uppercase tracking-[0.3em] text-violet-400">Node Configuration</h2>
           </div>
 
-          <button 
-            type="submit" 
-            disabled={isSubmitting}
-            className="w-full bg-[#FF6B6B] text-white py-4 rounded-2xl border-4 border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all font-black uppercase tracking-widest text-lg neo-brutal-shadow-teal disabled:opacity-50 flex items-center justify-center gap-3"
-          >
-            <Save size={24} strokeWidth={3} />
-            {isSubmitting ? 'Syncing...' : 'Save into Bank'}
-          </button>
-        </form>
+          <form onSubmit={handleSave} className="space-y-8">
+            <div className="glass-card p-10 rounded-[48px] space-y-10">
+              <AnimatePresence>
+                {error && (
+                  <motion.div 
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="flex items-center gap-3 p-5 bg-rose-500/5 border border-rose-500/20 text-rose-400 rounded-2xl font-bold text-xs"
+                  >
+                    <AlertCircle size={18} />
+                    <span>{error}</span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <div className="space-y-4">
+                <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-2">Core Content</label>
+                <textarea 
+                  required
+                  rows={4}
+                  placeholder="Enter Question..."
+                  className="w-full px-8 py-6 bg-white/[0.02] border border-white/[0.05] rounded-[32px] focus:outline-none focus:border-violet-500/50 text-xl font-bold text-white transition-all placeholder:text-slate-800"
+                  value={questionText}
+                  onChange={(e) => setQuestionText(e.target.value)}
+                />
+              </div>
+
+              <div className="grid gap-4">
+                {(['A', 'B', 'C', 'D'] as const).map((key) => (
+                  <div key={key} className="space-y-2 group">
+                    <div className="flex items-center justify-between px-4">
+                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 transition-colors group-focus-within:text-violet-500">Variant {key}</label>
+                      <button
+                        type="button"
+                        onClick={() => setCorrectAnswer(key)}
+                        className={cn(
+                          "px-4 py-1.5 rounded-full border transition-all text-[8px] font-black uppercase tracking-widest",
+                          correctAnswer === key ? "bg-cyan-500 text-black border-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.4)]" : "bg-white/5 border-transparent text-slate-600 hover:text-slate-400"
+                        )}
+                      >
+                        {correctAnswer === key ? 'Correct Path' : 'Select as Correct'}
+                      </button>
+                    </div>
+                    <input 
+                      required
+                      type="text" 
+                      placeholder={`Option ${key}...`}
+                      className={cn(
+                        "w-full px-6 py-5 border rounded-3xl focus:outline-none font-bold transition-all placeholder:text-slate-800",
+                        correctAnswer === key 
+                          ? "bg-cyan-500/[0.03] border-cyan-500/30 text-white shadow-[0_0_15px_rgba(6,182,212,0.05)]" 
+                          : "bg-white/[0.015] border-white/[0.05] text-slate-400 focus:text-white"
+                      )}
+                      value={options[key]}
+                      onChange={(e) => setOptions({ ...options, [key]: e.target.value })}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <button 
+                type="submit" 
+                disabled={isSubmitting}
+                className="btn-shine w-full bg-white text-black py-7 rounded-[32px] font-black uppercase tracking-[0.4em] text-base hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_50px_rgba(255,255,255,0.2)] disabled:opacity-30 flex items-center justify-center gap-4 mt-4"
+              >
+                <Zap size={24} className="fill-black" />
+                {isSubmitting ? 'Syncing...' : 'Deploy Node'}
+              </button>
+            </div>
+          </form>
+        </motion.div>
       </div>
     </div>
   );
