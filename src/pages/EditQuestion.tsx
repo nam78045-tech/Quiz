@@ -2,12 +2,12 @@ import { useState, useEffect, FormEvent } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { quizService } from '../services/quizService';
 import { Question } from '../types';
-import { ChevronLeft, Save, AlertCircle, Zap, ArrowLeft, RefreshCcw, Layers } from 'lucide-react';
+import { AlertCircle, Zap, ArrowLeft, RefreshCcw, Layers } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 
 export default function EditQuestion() {
-  const { sid, qid } = useParams<{ sid: string; qid: string }>();
+  const { subjectId, questionId } = useParams<{ subjectId: string; questionId: string }>();
   const navigate = useNavigate();
   
   const [questionText, setQuestionText] = useState('');
@@ -18,15 +18,15 @@ export default function EditQuestion() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (sid && qid) {
+    if (subjectId && questionId) {
       loadQuestion();
     }
-  }, [sid, qid]);
+  }, [subjectId, questionId]);
 
   const loadQuestion = async () => {
     try {
-      const questions = await quizService.getQuestions(sid!);
-      const q = questions.find(item => item.id === qid);
+      const questions = await quizService.getQuestions(subjectId!);
+      const q = questions.find(item => item.id === questionId);
       if (q) {
         setQuestionText(q.questionText);
         setOptions({
@@ -39,21 +39,21 @@ export default function EditQuestion() {
       }
       setLoading(false);
     } catch (err) {
-      setError('Failed to recalibrate question node.');
+      setError('Lỗi tải dữ liệu: Không thể lấy dữ liệu câu hỏi từ hệ thống.');
       setLoading(false);
     }
   };
 
   const handleSave = async (e: FormEvent) => {
     e.preventDefault();
-    if (!sid || !qid || !questionText || !options.A || !options.B || !options.C || !options.D) {
-      setError('Protocol error: Signal incomplete.');
+    if (!subjectId || !questionId || !questionText || !options.A || !options.B || !options.C || !options.D) {
+      setError('Lỗi: Hãy điền đầy đủ đáp án và nội dung câu hỏi.');
       return;
     }
 
     setIsSubmitting(true);
     try {
-      await quizService.updateQuestion(qid, {
+      await quizService.updateQuestion(questionId, {
         questionText,
         optionA: options.A,
         optionB: options.B,
@@ -61,9 +61,9 @@ export default function EditQuestion() {
         optionD: options.D,
         correctAnswer
       });
-      navigate(`/subject/${sid}`);
+      navigate(`/subject/${subjectId}`);
     } catch (err) {
-      setError('Transmission loss during reconfiguration.');
+      setError('Lỗi lưu trữ: Gặp sự cố kết nối với cơ sở dữ liệu.');
       setIsSubmitting(false);
     }
   };
@@ -71,78 +71,72 @@ export default function EditQuestion() {
   if (loading) return null;
 
   return (
-    <div className="max-w-3xl mx-auto space-y-16 pb-32">
-       <motion.div 
-        initial={{ opacity: 0, y: 30 }}
+    <div className="max-w-3xl mx-auto space-y-6 pb-24 px-4">
+      {/* Header */}
+      <motion.div 
+        initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        className="space-y-6"
+        className="space-y-4"
       >
-        <Link to={`/subject/${sid}`} className="group inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.05] text-[10px] font-black text-slate-500 hover:text-white transition-all uppercase tracking-[0.2em] hover:bg-white/[0.08]">
-           <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
-          Back to Knowledge Nebula
+        <Link to={`/subject/${subjectId}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-500 hover:text-indigo-650 transition-all">
+          <ArrowLeft size={14} />
+          Quay lại môn học
         </Link>
-        <div className="relative">
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tighter leading-none inline-block">
-            <span className="text-gradient">Recalibrate</span> <span className="text-gradient-cosmic glow-text">Node</span>
+        <div>
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
+            Chỉnh sửa câu hỏi
           </h1>
-          <motion.div 
-             animate={{ opacity: [0.2, 0.4, 0.2], scale: [1, 1.1, 1] }}
-             transition={{ repeat: Infinity, duration: 5 }}
-             className="absolute -top-10 -right-20 w-48 h-48 bg-cyan-500/10 blur-[90px] rounded-full pointer-events-none" 
-          />
+          <p className="text-xs text-slate-400 mt-1">
+            Đang chỉnh sửa mã câu hỏi: <span className="font-mono text-indigo-500 font-semibold text-xs">{questionId}</span>. Vui lòng đảm bảo tính chính xác của dữ liệu sau khi sửa đổi.
+          </p>
         </div>
-        <p className="text-xl font-medium text-slate-500 max-w-xl leading-relaxed">
-          Modifying intelligence node ID: <span className="font-mono text-cyan-400 text-xs">{qid}</span>. Ensure data integrity after update.
-        </p>
       </motion.div>
 
-      <form onSubmit={handleSave} className="space-y-10">
-        <div className="glass-card p-12 rounded-[56px] space-y-12 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-1/2 h-px bg-gradient-to-l from-violet-500 to-transparent" />
-          
+      <form onSubmit={handleSave} className="space-y-6">
+        <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm space-y-6 relative overflow-hidden">
           <AnimatePresence>
             {error && (
               <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }}
+                initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="flex items-center gap-3 p-5 bg-rose-500/5 border border-rose-500/20 text-rose-400 rounded-[24px] font-bold text-xs"
+                className="flex items-center gap-2 p-4 bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900 text-rose-600 dark:text-rose-400 rounded-xl font-semibold text-xs"
               >
-                <AlertCircle size={18} />
+                <AlertCircle size={16} />
                 <span>{error}</span>
               </motion.div>
             )}
           </AnimatePresence>
 
-          <div className="space-y-4">
-            <div className="flex items-center gap-3 ml-2">
-              <RefreshCcw size={14} className="text-violet-500 animate-[spin_4s_linear_infinite]" />
-              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Core Transmission</label>
+          <div className="space-y-2">
+            <div className="flex items-center gap-1.5 ml-1">
+              <RefreshCcw size={14} className="text-indigo-650" />
+              <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Nội dung câu hỏi</label>
             </div>
             <textarea 
               required
               rows={4}
-              placeholder="Update signal content..."
-              className="w-full px-10 py-8 bg-white/[0.015] border border-white/[0.04] rounded-[40px] focus:outline-none focus:border-violet-500/50 text-2xl font-bold text-white transition-all placeholder:text-slate-800 focus:bg-white/[0.03]"
+              placeholder="Nhập nội dung mới..."
+              className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-indigo-500 text-sm font-semibold text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 transition-all"
               value={questionText}
               onChange={(e) => setQuestionText(e.target.value)}
             />
           </div>
 
-          <div className="grid gap-5">
+          <div className="grid gap-4">
             {(['A', 'B', 'C', 'D'] as const).map((key) => (
               <div key={key} className="relative group">
-                <div className="absolute left-6 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl bg-white/[0.05] border border-white/[0.05] flex items-center justify-center font-black text-xs text-slate-500 transition-all group-focus-within:border-violet-500/50 group-focus-within:text-white">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-150 dark:border-slate-700 flex items-center justify-center font-bold text-xs text-slate-400 transition-all">
                   {key}
                 </div>
                 <input 
                   required
                   type="text" 
-                  placeholder={`Variant ${key}...`}
+                  placeholder={`Đáp án ${key}...`}
                   className={cn(
-                    "w-full pl-20 pr-32 py-6 border rounded-[32px] focus:outline-none font-bold transition-all text-lg",
+                    "w-full pl-16 pr-36 py-3 border rounded-xl focus:outline-none font-semibold text-xs transition-all",
                     correctAnswer === key 
-                      ? "bg-cyan-500/[0.03] border-cyan-500/30 text-white" 
-                      : "bg-white/[0.01] border-white/[0.04] text-slate-400 focus:text-white focus:bg-white/[0.03]"
+                      ? "bg-slate-50/10 border-indigo-200 text-slate-900 dark:text-white" 
+                      : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-705 text-slate-500 focus:text-slate-900 focus:bg-white dark:focus:bg-slate-900"
                   )}
                   value={options[key]}
                   onChange={(e) => setOptions({ ...options, [key]: e.target.value })}
@@ -151,30 +145,30 @@ export default function EditQuestion() {
                   type="button"
                   onClick={() => setCorrectAnswer(key)}
                   className={cn(
-                    "absolute right-4 top-1/2 -translate-y-1/2 px-5 py-2 rounded-2xl border transition-all text-[8px] font-black uppercase tracking-widest",
-                    correctAnswer === key ? "bg-cyan-500 text-black border-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.4)]" : "bg-white/5 border-transparent text-slate-600 hover:text-slate-400"
+                    "absolute right-3 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-lg border transition-all text-[10px] font-bold uppercase tracking-wider",
+                    correctAnswer === key ? "bg-emerald-600 text-white border-transparent" : "bg-slate-50 dark:bg-slate-800 border-transparent text-slate-400 hover:text-slate-600"
                   )}
                 >
-                  {correctAnswer === key ? 'Validated Path' : 'Set as Correct'}
+                  {correctAnswer === key ? 'Đáp án đúng' : 'Đánh dấu đúng'}
                 </button>
               </div>
             ))}
           </div>
 
-          <div className="flex gap-4 pt-6">
+          <div className="flex gap-3 pt-4">
             <Link 
-              to={`/subject/${sid}`}
-              className="flex-1 px-8 py-7 rounded-[32px] border border-white/5 text-slate-500 font-black uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-3 hover:bg-white/5 transition-all"
+              to={`/subject/${subjectId}`}
+              className="flex-1 px-5 py-3.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 font-bold text-xs text-center flex items-center justify-center transition-all"
             >
-              Abort Signal
+              Hủy bỏ
             </Link>
             <button 
               type="submit" 
               disabled={isSubmitting}
-              className="btn-shine flex-[2] bg-white text-black py-7 rounded-[32px] font-black uppercase tracking-[0.4em] text-base hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_50px_rgba(255,255,255,0.2)] disabled:opacity-30 flex items-center justify-center gap-4"
+              className="flex-[2] bg-indigo-600 hover:bg-indigo-700 text-white py-3.5 rounded-xl font-bold uppercase tracking-wider text-xs shadow-sm flex items-center justify-center gap-1.5 active:scale-95 transition-all"
             >
-              <Zap size={24} className="fill-black" />
-              {isSubmitting ? 'Syncing...' : 'Override Node'}
+              <Zap size={14} className="fill-white" />
+              {isSubmitting ? 'Đang cập nhật...' : 'Cập nhật câu hỏi'}
             </button>
           </div>
         </div>

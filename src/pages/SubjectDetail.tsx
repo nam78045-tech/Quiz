@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { quizService } from '../services/quizService';
 import { Subject, Question } from '../types';
-import { Play, Plus, BookOpen, ChevronLeft, Flag, Edit2, Info, Pin, Sparkles, Zap, ArrowLeft, ArrowRight, Activity, Map } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { Play, Plus, ChevronLeft, Flag, Edit2, Pin, Sparkles, Activity, ArrowLeft } from 'lucide-react';
+import { motion } from 'motion/react';
 import { cn } from '../lib/utils';
 import { useAdmin } from '../context/AdminContext';
 
@@ -45,54 +45,51 @@ export default function SubjectDetail() {
   if (loading) return null;
 
   if (!subject) return (
-    <div className="text-center py-40 glass-card rounded-[80px]">
-      <h1 className="text-3xl font-black text-white glow-text uppercase tracking-widest mb-6">Subject Void Detected</h1>
-      <Link to="/" className="btn-shine bg-white text-black px-10 py-5 rounded-[32px] font-black uppercase text-xs tracking-widest inline-block">Return to Command Map</Link>
+    <div className="text-center py-24 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-xl mx-auto px-4">
+      <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-200 mb-4">Không tìm thấy môn học</h1>
+      <Link to="/" className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold text-xs tracking-wider inline-block">Trở lại trang chủ</Link>
     </div>
   );
 
   return (
-    <div className="space-y-24 pb-32">
-      {/* Header Section - Refined */}
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 pt-12">
+    <div className="space-y-8 pb-24 max-w-5xl mx-auto px-4">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pt-6">
         <motion.div 
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="space-y-8"
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="space-y-4"
         >
-          <Link to="/" className="group inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.05] text-[10px] font-black text-slate-500 hover:text-white transition-all uppercase tracking-[0.2em] hover:bg-white/[0.08]">
-            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
-            Back to Galactic Map
+          <Link to="/" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-500 hover:text-indigo-600 transition-all">
+            <ArrowLeft size={14} />
+            Quay lại trang chủ
           </Link>
           
-          <div className="flex items-center gap-8">
-            <div className="relative group">
-              <div className="absolute inset-0 bg-violet-500/20 blur-[30px] rounded-full group-hover:bg-violet-500/40 transition-all duration-700" />
-              <div className="w-24 h-24 rounded-[40px] bg-gradient-to-br from-white/[0.05] to-transparent border border-white/10 flex items-center justify-center text-5xl relative z-10 shadow-inner group-hover:rotate-12 transition-transform duration-700">
-                🪐
-              </div>
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900 flex items-center justify-center text-3xl shrink-0">
+              📖
             </div>
             <div>
-              <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tighter leading-none mb-4">
-                <span className="text-gradient">{subject.name}</span>
+              <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-2">
+                {subject.name}
               </h1>
-              <div className="flex items-center gap-6 flex-wrap">
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-cyan-500/10 border border-cyan-500/20">
-                  <Activity size={14} className="text-cyan-400" />
-                  <span className="text-[10px] font-black uppercase text-cyan-400 tracking-wider">
-                    {questions.length} Knowledge Nodes
+              <div className="flex items-center gap-3 flex-wrap">
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 border border-indigo-100/40 dark:border-indigo-900/40">
+                  <Activity size={12} />
+                  <span className="text-[11px] font-bold uppercase tracking-wider">
+                    {questions.length} câu hỏi
                   </span>
                 </div>
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-rose-500/10 border border-rose-500/20">
-                  <Flag size={14} className="text-rose-400" />
-                  <span className="text-[10px] font-black uppercase text-rose-400 tracking-wider">
-                    {flaggedIds.length} Critical Points
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border border-rose-100/45 dark:border-rose-900/40">
+                  <Flag size={12} />
+                  <span className="text-[11px] font-bold uppercase tracking-wider">
+                    {flaggedIds.length} đã đánh dấu thi
                   </span>
                 </div>
-                <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-white/[0.03] border border-white/[0.05]">
-                  <Sparkles size={14} className="text-slate-500" />
-                  <span className="text-[10px] font-black uppercase text-slate-500 tracking-wider">
-                    Synced {new Date(subject.createdAt).toLocaleDateString()}
+                <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-500 border border-slate-200 dark:border-slate-705">
+                  <Sparkles size={12} />
+                  <span className="text-[11px] font-bold uppercase tracking-wider">
+                    Tạo ngày {new Date(subject.createdAt).toLocaleDateString('vi-VN')}
                   </span>
                 </div>
               </div>
@@ -101,143 +98,139 @@ export default function SubjectDetail() {
         </motion.div>
 
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-wrap gap-4"
+          className="flex flex-wrap gap-2.5 shrink-0"
         >
           {isAdminUI && (
-              <Link 
-                to={`/add/${id}`}
-                className="group flex items-center gap-3 px-8 py-5 rounded-[28px] border border-white/[0.05] bg-white/[0.02] hover:bg-white/[0.08] transition-all font-black uppercase text-[10px] tracking-[0.2em] text-white backdrop-blur-3xl"
-              >
-              <Plus size={18} className="text-violet-400 group-hover:rotate-90 transition-transform" />
-              Inject DNA
+            <Link 
+              to={`/add/${id}`}
+              className="flex items-center gap-1 px-5 py-3 rounded-xl border border-slate-200 dark:border-slate-705 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 font-bold text-xs tracking-wider transition-all"
+            >
+              <Plus size={16} />
+              Thêm câu hỏi
             </Link>
           )}
           <Link 
             to={`/quiz/${id}`}
             className={cn(
-              "btn-shine flex items-center gap-4 px-12 py-5 bg-white text-black rounded-[28px] hover:scale-105 active:scale-95 transition-all font-black uppercase text-xs tracking-[0.4em] shadow-[0_0_50px_rgba(255,255,255,0.2)]",
-              questions.length === 0 && "opacity-30 cursor-not-allowed pointer-events-none grayscale"
+              "flex items-center gap-1 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl hover:scale-[1.02] active:scale-95 transition-all font-bold text-xs tracking-wider shadow-sm",
+              questions.length === 0 && "opacity-30 cursor-not-allowed pointer-events-none"
             )}
           >
-            <Play size={20} fill="currentColor" stroke="none" />
-            Initiate Warp
+            <Play size={14} fill="currentColor" stroke="none" />
+            Luyện tập trắc nghiệm
           </Link>
         </motion.div>
       </div>
 
-      <div className="space-y-12">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-4">
-            <Map className="text-violet-400" size={24} />
-            <h2 className="text-xl font-black tracking-[0.4em] text-white uppercase ml-1">Intelligence Map</h2>
-          </div>
-          <div className="h-px flex-1 bg-gradient-to-r from-white/10 via-white/5 to-transparent" />
+      <div className="space-y-6">
+        <div className="flex items-center">
+          <h2 className="text-base font-bold tracking-tight text-slate-800 dark:text-slate-200 uppercase flex items-center gap-2">
+            <span className="w-1.5 h-4 bg-indigo-600 rounded-full inline-block" />
+            Danh sách câu hỏi của môn học
+          </h2>
+          <div className="h-px flex-1 ml-6 bg-slate-100 dark:bg-slate-800" />
         </div>
 
         {questions.length > 0 ? (
-          <div className="grid gap-10">
+          <div className="grid gap-4">
             {questions.map((q, index) => (
               <motion.div 
                 key={q.id}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ delay: (index % 5) * 0.05 }}
+                viewport={{ once: true }}
                 className={cn(
-                  "glass-card p-6 md:p-8 rounded-[32px] group relative overflow-hidden transition-all duration-500",
-                  flaggedIds.includes(q.id) ? "border-rose-500/20 shadow-[0_0_30px_rgba(244,63,94,0.06)]" : "hover:border-white/10"
+                  "p-5 bg-white dark:bg-slate-900 border border-slate-150 dark:border-slate-800 rounded-2xl transition-all shadow-sm flex flex-col md:flex-row items-stretch justify-between gap-6",
+                  flaggedIds.includes(q.id) ? "border-rose-200 dark:border-rose-900 bg-rose-50/10 dark:bg-rose-950/5" : ""
                 )}
               >
-                <div className="flex flex-col lg:flex-row items-start justify-between gap-8">
-                  <div className="space-y-6 flex-1 w-full">
-                    <div className="flex items-center gap-3 flex-wrap">
-                      <div className="bg-white/[0.03] border border-white/[0.05] px-3 py-1 rounded-full flex items-center gap-2">
-                        <div className="w-1 h-1 rounded-full bg-violet-400" />
-                        <span className="text-[8px] font-black text-slate-500 uppercase tracking-[0.3em]">Node {index + 1}</span>
-                      </div>
-                    </div>
-                    
-                    <h3 className="text-xl md:text-2xl font-bold text-white leading-tight tracking-tight">
-                      {q.questionText}
-                    </h3>
-                    
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {(['A', 'B', 'C', 'D'] as const).map(opt => (
-                        <div 
-                          key={opt} 
-                          className={cn(
-                            "flex items-center gap-4 p-3.5 rounded-2xl border transition-all duration-500",
-                            q.correctAnswer === opt 
-                              ? "bg-cyan-500/5 border-cyan-500/20" 
-                              : "bg-white/[0.01] border-transparent opacity-40"
-                          )}
-                        >
-                          <div className={cn(
-                            "shrink-0 w-8 h-8 flex items-center justify-center rounded-xl border text-[9px] font-black",
-                            q.correctAnswer === opt 
-                              ? "border-cyan-400 bg-cyan-400 text-black shadow-[0_0_10px_rgba(6,182,212,0.4)]" 
-                              : "border-white/10 bg-white/5 text-slate-600"
-                          )}>
-                            {opt}
-                          </div>
-                          <span className={cn(
-                            "font-bold text-sm tracking-tight truncate",
-                            q.correctAnswer === opt ? "text-white" : "text-slate-500"
-                          )}>
-                            {q[`option${opt}` as keyof Question]}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
+                <div className="space-y-4 flex-1">
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-0.5 rounded-md font-bold text-slate-500 uppercase tracking-wider">
+                      Câu {index + 1}
+                    </span>
+                    {q.isNoted && (
+                      <span className="text-[10px] bg-amber-50 dark:bg-amber-950 text-amber-650 dark:text-amber-400 border border-amber-200/50 dark:border-amber-900/50 px-2 py-0.5 rounded-md font-bold uppercase tracking-wider">
+                        Đánh dấu khó
+                      </span>
+                    )}
                   </div>
                   
-                  {isAdminUI && (
-                    <div className="flex lg:flex-col gap-4 w-full lg:w-auto mt-6 lg:mt-0 pt-8 lg:pt-0 border-t lg:border-t-0 lg:border-l border-white/[0.03] lg:pl-10">
-                      <Link 
-                        to={`/edit/${id}/${q.id}`}
-                        className="flex-1 lg:w-16 lg:h-16 h-14 flex items-center justify-center rounded-[24px] bg-white/[0.02] border border-white/[0.05] text-slate-500 hover:bg-violet-600 hover:text-white hover:border-violet-500 transition-all shadow-xl group/edit"
-                      >
-                        <Edit2 size={24} className="group-hover:rotate-12 transition-transform" />
-                      </Link>
-                      <button 
-                        onClick={() => handleToggleNote(q)}
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white leading-snug">
+                    {q.questionText}
+                  </h3>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {(['A', 'B', 'C', 'D'] as const).map(opt => (
+                      <div 
+                        key={opt} 
                         className={cn(
-                          "flex-1 lg:w-16 lg:h-16 h-14 flex items-center justify-center rounded-[24px] transition-all shadow-xl border",
-                          q.isNoted ? "bg-amber-500 border-amber-400 text-black" : "bg-white/[0.02] border-white/[0.05] text-slate-500 hover:text-white"
+                          "flex items-center gap-3 p-3 rounded-xl border transition-all text-xs",
+                          q.correctAnswer === opt 
+                            ? "bg-indigo-50/40 dark:bg-indigo-950/20 border-indigo-200 dark:border-indigo-900" 
+                            : "bg-slate-50/30 border-transparent opacity-80"
                         )}
-                        title={q.isNoted ? "De-prioritize Node" : "Prioritize Node"}
                       >
-                        <Pin size={24} fill={q.isNoted ? "currentColor" : "none"} />
-                      </button>
-                    </div>
-                  )}
+                        <div className={cn(
+                          "shrink-0 w-6 h-6 flex items-center justify-center rounded-lg border text-[10px] font-bold",
+                          q.correctAnswer === opt 
+                            ? "border-indigo-500 bg-indigo-600 text-white shadow-sm" 
+                            : "border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-500"
+                        )}>
+                          {opt}
+                        </div>
+                        <span className={cn(
+                          "font-semibold truncate",
+                          q.correctAnswer === opt ? "text-slate-900 dark:text-white" : "text-slate-500"
+                        )}>
+                          {q[`option${opt}` as keyof Question]}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
+                
+                {isAdminUI && (
+                  <div className="flex md:flex-col gap-2 shrink-0 md:pl-5 md:border-l border-slate-100 dark:border-slate-850 justify-center">
+                    <Link 
+                      to={`/edit/${id}/${q.id}`}
+                      className="flex-1 md:flex-initial w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-750 transition-all"
+                      title="Chỉnh sửa câu hỏi"
+                    >
+                      <Edit2 size={16} />
+                    </Link>
+                    <button 
+                      onClick={() => handleToggleNote(q)}
+                      className={cn(
+                        "flex-1 md:flex-initial w-10 h-10 flex items-center justify-center rounded-xl border transition-all",
+                        q.isNoted 
+                          ? "bg-amber-100 border-amber-300 dark:bg-amber-950/55 dark:border-amber-800 text-amber-700 dark:text-amber-400" 
+                          : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 hover:text-slate-600"
+                      )}
+                      title={q.isNoted ? "Bỏ đánh dấu khó" : "Ghim là câu hỏi khó"}
+                    >
+                      <Pin size={16} fill={q.isNoted ? "currentColor" : "none"} />
+                    </button>
+                  </div>
+                )}
               </motion.div>
             ))}
           </div>
         ) : (
-          <div className="text-center py-40 glass-card rounded-[80px]">
-             <div className="relative inline-block mb-12">
-              <div className="w-32 h-32 bg-slate-500/5 rounded-full flex items-center justify-center">
-                <Sparkles className="text-slate-800" size={64} />
-              </div>
-              <motion.div 
-                animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.4, 1] }}
-                transition={{ repeat: Infinity, duration: 4 }}
-                className="absolute inset-0 bg-violet-500/20 blur-3xl rounded-full" 
-              />
+          <div className="text-center py-20 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm">
+            <div className="w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Sparkles className="text-slate-400" size={28} />
             </div>
-            <p className="text-slate-500 font-bold text-2xl mb-12 max-w-md mx-auto">
-              This intelligence map is currently blank. Ready to deploy new knowledge assets?
-            </p>
+            <p className="text-slate-500 font-bold text-base mb-2">Môn học này hiện chưa có câu hỏi nào</p>
+            <p className="text-slate-400 text-xs max-w-sm mx-auto mb-6">Bạn có thể tạo câu hỏi mới bằng bộ quét thông minh AI hoặc nhập tay thủ công.</p>
             {isAdminUI && (
               <Link 
                 to={`/add/${id}`} 
-                className="btn-shine bg-white text-black px-12 py-6 rounded-[32px] font-black uppercase text-xs tracking-widest hover:scale-105 active:scale-95 transition-all shadow-2xl"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-bold text-xs tracking-wider inline-block shadow-sm"
               >
-                Initalize Deployment
+                Tạo câu hỏi đầu tiên
               </Link>
             )}
           </div>

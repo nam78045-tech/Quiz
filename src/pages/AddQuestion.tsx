@@ -1,7 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { quizService } from '../services/quizService';
-import { ChevronLeft, Save, Sparkles, AlertCircle, Zap, ArrowLeft, Cpu, Terminal, Layers } from 'lucide-react';
+import { ChevronLeft, Save, AlertCircle, Zap, ArrowLeft, Cpu, Terminal, Layers } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -20,8 +20,8 @@ export default function AddQuestion() {
     if (!rawText.trim()) return;
     setIsParsing(true);
     
-    // Artificial delay for "Processing" feel
-    await new Promise(r => setTimeout(r, 800));
+    // Artificial delay for scanning effect
+    await new Promise(r => setTimeout(r, 600));
 
     const splitRegex = /(?:\n|^)(?=[A-D][).:\-\]])/i;
     const parts = rawText.split(splitRegex).map(p => p.trim()).filter(Boolean);
@@ -49,7 +49,7 @@ export default function AddQuestion() {
         });
         setError('');
       } else {
-        setError('DATA MISMATCH: Protocol requires A) B) C) D) sequence.');
+        setError('Sai định dạng: Định dạng văn bản quét yêu cầu đầy đủ đáp án A), B), C), D)');
       }
     }
     setIsParsing(false);
@@ -58,7 +58,7 @@ export default function AddQuestion() {
   const handleSave = async (e: FormEvent) => {
     e.preventDefault();
     if (!id || !questionText || !options.A || !options.B || !options.C || !options.D) {
-      setError('CRITICAL ERROR: Neural linkage incomplete.');
+      setError('Lỗi: Hãy điền đầy đủ nội dung câu hỏi và các lựa chọn đáp án.');
       return;
     }
 
@@ -75,123 +75,117 @@ export default function AddQuestion() {
       });
       navigate(`/subject/${id}`);
     } catch (err) {
-      setError('UPLINK FAILED: Connection to cosmic database severed.');
+      setError('Lỗi kết nối: Không thể gửi câu hỏi lên cơ sở dữ liệu.');
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-16 pb-32">
-      {/* Header with improved typography */}
+    <div className="max-w-5xl mx-auto space-y-8 pb-24 px-4">
+      {/* Header */}
       <motion.div 
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        className="space-y-6"
+        className="space-y-4"
       >
-        <Link to={`/subject/${id}`} className="group inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.05] text-[10px] font-black text-slate-500 hover:text-white transition-all uppercase tracking-[0.2em] hover:bg-white/[0.08]">
-           <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
-          Back to Galactic Sector
+        <Link to={`/subject/${id}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-500 hover:text-indigo-650 transition-all">
+          <ArrowLeft size={14} />
+          Quay lại môn học
         </Link>
-        <div className="relative">
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tighter leading-none inline-block">
-            <span className="text-gradient">Inject</span> <span className="text-gradient-cosmic glow-text">Intelligence</span>
+        <div>
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
+            Thêm câu hỏi trắc nghiệm
           </h1>
-          <motion.div 
-            animate={{ opacity: [0.3, 0.6, 0.3] }}
-            transition={{ repeat: Infinity, duration: 4 }}
-            className="absolute -top-10 -right-20 w-40 h-40 bg-violet-500/10 blur-[80px] rounded-full pointer-events-none" 
-          />
+          <p className="text-xs text-slate-400 mt-1">
+            Khởi tạo các câu hỏi mới vào kho dữ liệu môn học. Bạn có thể dán nội dung thô để sử dụng bộ quét nhanh AI hoặc điền tay thủ công.
+          </p>
         </div>
-        <p className="text-xl font-medium text-slate-500 max-w-2xl leading-relaxed">
-          Initialize new knowledge fragments for the neural network. Use the AI parser for rapid deployment or manual injection for precision.
-        </p>
       </motion.div>
 
-      <div className="grid lg:grid-cols-[1.2fr,1fr] gap-12 items-start">
-        {/* Parser Panel - More Techy */}
+      <div className="grid lg:grid-cols-[1fr,1.1fr] gap-8 items-start">
+        {/* Parser Panel */}
         <motion.section 
-          initial={{ opacity: 0, x: -20 }}
+          initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.1 }}
-          className="glass-card p-10 rounded-[48px] border-cyan-500/10 group relative"
+          className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm relative group"
         >
-          <div className="flex items-center justify-between mb-10">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 flex items-center justify-center text-cyan-400">
-                <Cpu size={24} />
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-cyan-50 dark:bg-cyan-950/20 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
+                <Cpu size={18} />
               </div>
               <div>
-                <h2 className="text-xs font-black uppercase tracking-[0.3em] text-cyan-400">Smart Link Parser</h2>
-                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">Automated Extraction</p>
+                <h2 className="text-xs font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">Quét nhanh bằng AI</h2>
+                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest mt-0.5">Tự động hóa bốc tách</p>
               </div>
             </div>
             <button 
               onClick={parseText}
               disabled={isParsing || !rawText}
               className={cn(
-                "btn-shine px-6 py-3 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all shadow-2xl disabled:opacity-30",
-                isParsing ? "bg-slate-800 text-slate-500" : "bg-cyan-500 text-black hover:scale-105 active:scale-95 shadow-cyan-500/20"
+                "px-4 py-2 rounded-xl text-xs font-bold tracking-wide transition-all shadow-sm active:scale-95 disabled:opacity-30",
+                isParsing ? "bg-slate-100 text-slate-400" : "bg-cyan-600 hover:bg-cyan-700 text-white"
               )}
             >
-              {isParsing ? 'Processing...' : 'Deep Scan'}
+              {isParsing ? 'Đang phân tích...' : 'Bắt đầu quét'}
             </button>
           </div>
           
           <div className="relative">
-            <div className="absolute top-4 left-4 text-cyan-500/30 flex items-center gap-2 pointer-events-none">
-              <Terminal size={14} />
-              <span className="text-[8px] font-mono font-bold tracking-widest">RAW_DATA_INPUT</span>
-            </div>
             <textarea 
-              placeholder="Waiting for input stream..."
-              rows={8}
-              className="w-full pt-12 p-8 bg-black/40 border border-white/[0.05] rounded-[32px] focus:outline-none focus:border-cyan-500/50 text-white font-mono text-sm leading-loose transition-all placeholder:text-slate-800 focus:bg-black/60 shadow-inner"
+              placeholder="Dán nội dung thô ở đây. Ví dụ:
+Nước nào có diện tích lớn nhất thế giới?
+A) Nga
+B) Canada
+C) Mỹ
+D) Trung Quốc"
+              rows={12}
+              className="w-full p-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-cyan-500 text-slate-900 dark:text-white font-mono text-xs leading-relaxed"
               value={rawText}
               onChange={(e) => setRawText(e.target.value)}
             />
           </div>
           
-          <div className="mt-8 flex items-center gap-3 text-slate-600">
-            <div className="w-1 h-1 rounded-full bg-cyan-500/50" />
-            <p className="text-[10px] uppercase font-black tracking-widest">Supported: Q &rarr; A) B) C) D)</p>
+          <div className="mt-4 flex items-center gap-2 text-slate-400 text-[11px] font-semibold uppercase tracking-wider">
+            <div className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
+            <p>Hỗ trợ cấu trúc định dạng: Q &rarr; A) B) C) D)</p>
           </div>
         </motion.section>
 
         {/* Manual Configuration */}
         <motion.div
-           initial={{ opacity: 0, x: 20 }}
-           animate={{ opacity: 1, x: 0 }}
-           transition={{ delay: 0.2 }}
-           className="space-y-8"
+          initial={{ opacity: 0, x: 10 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="space-y-6"
         >
-          <div className="flex items-center gap-4 px-4">
-            <Layers size={18} className="text-violet-500" />
-            <h2 className="text-xs font-black uppercase tracking-[0.3em] text-violet-400">Node Configuration</h2>
+          <div className="flex items-center gap-2 px-1">
+            <Layers size={16} className="text-indigo-600" />
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-750 dark:text-slate-300">Biểu mẫu câu hỏi</h2>
           </div>
 
-          <form onSubmit={handleSave} className="space-y-8">
-            <div className="glass-card p-10 rounded-[48px] space-y-10">
+          <form onSubmit={handleSave} className="space-y-6">
+            <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm space-y-6">
               <AnimatePresence>
                 {error && (
                   <motion.div 
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="flex items-center gap-3 p-5 bg-rose-500/5 border border-rose-500/20 text-rose-400 rounded-2xl font-bold text-xs"
+                    className="flex items-center gap-2 p-4 bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900 text-rose-600 dark:text-rose-400 rounded-xl font-semibold text-xs"
                   >
-                    <AlertCircle size={18} />
+                    <AlertCircle size={16} />
                     <span>{error}</span>
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              <div className="space-y-4">
-                <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-2">Core Content</label>
+              <div className="space-y-2">
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Nội dung câu hỏi</label>
                 <textarea 
                   required
                   rows={4}
-                  placeholder="Enter Question..."
-                  className="w-full px-8 py-6 bg-white/[0.02] border border-white/[0.05] rounded-[32px] focus:outline-none focus:border-violet-500/50 text-xl font-bold text-white transition-all placeholder:text-slate-800"
+                  placeholder="Nhập nội dung câu hỏi trắc nghiệm của bạn..."
+                  className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-indigo-500 text-sm font-semibold text-slate-905 dark:text-white"
                   value={questionText}
                   onChange={(e) => setQuestionText(e.target.value)}
                 />
@@ -199,29 +193,29 @@ export default function AddQuestion() {
 
               <div className="grid gap-4">
                 {(['A', 'B', 'C', 'D'] as const).map((key) => (
-                  <div key={key} className="space-y-2 group">
-                    <div className="flex items-center justify-between px-4">
-                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 transition-colors group-focus-within:text-violet-500">Variant {key}</label>
+                  <div key={key} className="space-y-1.5 group">
+                    <div className="flex items-center justify-between px-1">
+                      <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 transition-colors group-focus-within:text-indigo-600">Lựa chọn {key}</label>
                       <button
                         type="button"
                         onClick={() => setCorrectAnswer(key)}
                         className={cn(
-                          "px-4 py-1.5 rounded-full border transition-all text-[8px] font-black uppercase tracking-widest",
-                          correctAnswer === key ? "bg-cyan-500 text-black border-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.4)]" : "bg-white/5 border-transparent text-slate-600 hover:text-slate-400"
+                          "px-3 py-1 rounded-lg border transition-all text-[10px] font-bold uppercase tracking-wider",
+                          correctAnswer === key ? "bg-emerald-600 text-white border-emerald-55F shadow-none" : "bg-slate-50 dark:bg-slate-800 border-transparent text-slate-500 hover:text-slate-700"
                         )}
                       >
-                        {correctAnswer === key ? 'Correct Path' : 'Select as Correct'}
+                        {correctAnswer === key ? 'Đáp án đúng' : 'Chọn làm đáp án đúng'}
                       </button>
                     </div>
                     <input 
                       required
                       type="text" 
-                      placeholder={`Option ${key}...`}
+                      placeholder={`Nhập đáp án lựa chọn ${key}...`}
                       className={cn(
-                        "w-full px-6 py-5 border rounded-3xl focus:outline-none font-bold transition-all placeholder:text-slate-800",
+                        "w-full px-4 py-2.5 border rounded-xl focus:outline-none text-xs font-semibold",
                         correctAnswer === key 
-                          ? "bg-cyan-500/[0.03] border-cyan-500/30 text-white shadow-[0_0_15px_rgba(6,182,212,0.05)]" 
-                          : "bg-white/[0.015] border-white/[0.05] text-slate-400 focus:text-white"
+                          ? "bg-emerald-50/10 dark:bg-emerald-950/10 border-emerald-5D0 text-slate-900 dark:text-white" 
+                          : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-705 text-slate-600 dark:text-slate-300 focus:text-slate-900"
                       )}
                       value={options[key]}
                       onChange={(e) => setOptions({ ...options, [key]: e.target.value })}
@@ -233,10 +227,10 @@ export default function AddQuestion() {
               <button 
                 type="submit" 
                 disabled={isSubmitting}
-                className="btn-shine w-full bg-white text-black py-7 rounded-[32px] font-black uppercase tracking-[0.4em] text-base hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_50px_rgba(255,255,255,0.2)] disabled:opacity-30 flex items-center justify-center gap-4 mt-4"
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-xl font-bold uppercase tracking-wider text-xs shadow-sm transition-all flex items-center justify-center gap-1.5 active:scale-95 disabled:opacity-30"
               >
-                <Zap size={24} className="fill-black" />
-                {isSubmitting ? 'Syncing...' : 'Deploy Node'}
+                <Zap size={14} className="fill-white" />
+                {isSubmitting ? 'Đang lưu trữ dữ liệu...' : 'Lưu câu hỏi mới'}
               </button>
             </div>
           </form>
