@@ -136,7 +136,7 @@ export default function EditQuestion() {
                     "w-full pl-16 pr-36 py-3 border rounded-xl focus:outline-none font-semibold text-xs transition-all",
                     correctAnswer === key 
                       ? "bg-slate-50/10 border-indigo-200 text-slate-900 dark:text-white" 
-                      : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-705 text-slate-500 focus:text-slate-900 focus:bg-white dark:focus:bg-slate-900"
+                      : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 focus:text-slate-900 focus:bg-white dark:focus:bg-slate-900"
                   )}
                   value={options[key]}
                   onChange={(e) => setOptions({ ...options, [key]: e.target.value })}

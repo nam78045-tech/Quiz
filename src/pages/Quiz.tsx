@@ -235,11 +235,11 @@ export default function Quiz() {
               const isSelected = selectedOption === opt.key;
               const isCorrect = opt.key === currentQuestion.correctAnswer;
               
-              let stateClasses = "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-350";
+              let stateClasses = "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-805 text-slate-800 dark:text-slate-200 hover:border-indigo-600 dark:hover:border-indigo-500 hover:bg-slate-50 dark:hover:bg-slate-850/50";
               if (showResult) {
-                if (isCorrect) stateClasses = "bg-emerald-50 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-400";
-                else if (isSelected) stateClasses = "bg-rose-50 dark:bg-rose-950/20 border-rose-350 dark:border-rose-800 text-rose-700 dark:text-rose-400 opacity-90";
-                else stateClasses = "opacity-40 grayscale pointer-events-none";
+                if (isCorrect) stateClasses = "bg-emerald-50 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300";
+                else if (isSelected) stateClasses = "bg-rose-50 dark:bg-rose-950/20 border-rose-350 dark:border-rose-800 text-rose-700 dark:text-rose-300 opacity-90";
+                else stateClasses = "opacity-30 grayscale pointer-events-none";
               }
 
               return (
@@ -248,7 +248,7 @@ export default function Quiz() {
                   disabled={showResult}
                   onClick={() => handleSelect(opt.key)}
                   className={cn(
-                    "w-full p-4 rounded-xl text-left border transition-all flex items-center gap-4.5 font-medium text-sm",
+                    "w-full p-4 rounded-xl text-left border transition-all flex items-center gap-4 hover:scale-[1.005] active:scale-95 font-medium text-sm cursor-pointer",
                     stateClasses
                   )}
                 >
@@ -256,11 +256,11 @@ export default function Quiz() {
                     "shrink-0 w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs transition-all",
                     showResult && isCorrect ? "bg-emerald-600 text-white" : 
                     showResult && isSelected ? "bg-rose-600 text-white" :
-                    "bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500"
+                    "bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-350"
                   )}>
                     {showResult ? (isCorrect ? <CheckCircle size={15} /> : (isSelected ? <XCircle size={15} /> : opt.key)) : opt.key}
                   </div>
-                  <span className="font-semibold text-slate-800 dark:text-slate-205 leading-snug">{opt.text}</span>
+                  <span className="font-semibold text-slate-900 dark:text-slate-100 leading-snug">{opt.text}</span>
                 </button>
               );
             })}

@@ -186,7 +186,7 @@ D) Trung Quốc"
                   required
                   rows={4}
                   placeholder="Nhập nội dung câu hỏi trắc nghiệm của bạn..."
-                  className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-indigo-500 text-sm font-semibold text-slate-905 dark:text-white"
+                  className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-indigo-500 text-sm font-semibold text-slate-900 dark:text-white"
                   value={questionText}
                   onChange={(e) => setQuestionText(e.target.value)}
                 />
@@ -216,7 +216,7 @@ D) Trung Quốc"
                         "w-full px-4 py-2.5 border rounded-xl focus:outline-none text-xs font-semibold",
                         correctAnswer === key 
                           ? "bg-emerald-50/10 dark:bg-emerald-950/10 border-emerald-5D0 text-slate-900 dark:text-white" 
-                          : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-705 text-slate-600 dark:text-slate-300 focus:text-slate-900"
+                          : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 focus:text-slate-900"
                       )}
                       value={options[key]}
                       onChange={(e) => setOptions({ ...options, [key]: e.target.value })}

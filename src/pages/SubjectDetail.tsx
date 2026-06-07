@@ -86,7 +86,7 @@ export default function SubjectDetail() {
                     {flaggedIds.length} đã đánh dấu thi
                   </span>
                 </div>
-                <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-500 border border-slate-200 dark:border-slate-705">
+                <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-500 border border-slate-200 dark:border-slate-700">
                   <Sparkles size={12} />
                   <span className="text-[11px] font-bold uppercase tracking-wider">
                     Tạo ngày {new Date(subject.createdAt).toLocaleDateString('vi-VN')}
@@ -105,7 +105,7 @@ export default function SubjectDetail() {
           {isAdminUI && (
             <Link 
               to={`/add/${id}`}
-              className="flex items-center gap-1 px-5 py-3 rounded-xl border border-slate-200 dark:border-slate-705 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 font-bold text-xs tracking-wider transition-all"
+              className="flex items-center gap-1 px-5 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 font-bold text-xs tracking-wider transition-all"
             >
               <Plus size={16} />
               Thêm câu hỏi
