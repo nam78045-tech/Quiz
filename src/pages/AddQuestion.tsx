@@ -1,7 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { quizService } from '../services/quizService';
-import { ChevronLeft, Save, AlertCircle, Zap, ArrowLeft, Cpu, Terminal, Layers } from 'lucide-react';
+import { ChevronLeft, Save, AlertCircle, Zap, ArrowLeft, FileText, Terminal, Layers } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -20,8 +20,8 @@ export default function AddQuestion() {
     if (!rawText.trim()) return;
     setIsParsing(true);
     
-    // Artificial delay for scanning effect
-    await new Promise(r => setTimeout(r, 600));
+    // Quick delay for smoother UI feedback
+    await new Promise(r => setTimeout(r, 150));
 
     const splitRegex = /(?:\n|^)(?=[A-D][).:\-\]])/i;
     const parts = rawText.split(splitRegex).map(p => p.trim()).filter(Boolean);
@@ -97,7 +97,7 @@ export default function AddQuestion() {
             Thêm câu hỏi trắc nghiệm
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Khởi tạo các câu hỏi mới vào kho dữ liệu môn học. Bạn có thể dán nội dung thô để sử dụng bộ quét nhanh AI hoặc điền tay thủ công.
+            Khởi tạo các câu hỏi mới vào kho dữ liệu môn học. Bạn có thể dán nội dung thô để tự động phân tích bóc tách hoặc điền tay thủ công.
           </p>
         </div>
       </motion.div>
@@ -112,14 +112,15 @@ export default function AddQuestion() {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-cyan-50 dark:bg-cyan-950/20 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
-                <Cpu size={18} />
+                <FileText size={18} />
               </div>
               <div>
-                <h2 className="text-xs font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">Quét nhanh bằng AI</h2>
-                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest mt-0.5">Tự động hóa bốc tách</p>
+                <h2 className="text-xs font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">Tự động bóc tách</h2>
+                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest mt-0.5">Phân tích theo quy tắc</p>
               </div>
             </div>
             <button 
+              type="button"
               onClick={parseText}
               disabled={isParsing || !rawText}
               className={cn(
@@ -127,7 +128,7 @@ export default function AddQuestion() {
                 isParsing ? "bg-slate-100 text-slate-400" : "bg-cyan-600 hover:bg-cyan-700 text-white"
               )}
             >
-              {isParsing ? 'Đang phân tích...' : 'Bắt đầu quét'}
+              {isParsing ? 'Đang phân tích...' : 'Bóc tách nhanh'}
             </button>
           </div>
           
